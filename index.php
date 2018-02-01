@@ -6,6 +6,7 @@
 
 	<?php
 		require 'config.php';
+		require 'functions/apicalls.php';
 
 
 
