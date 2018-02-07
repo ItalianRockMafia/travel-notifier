@@ -64,7 +64,7 @@ if ($tg_user !== false) {
 ?>
 <div class="topspacer"></div>
 <h3>Select your station</h3>
-<form method="POST" action="?station=1" class="form-inline">
+<form method="POST" action="stationmgmt.php?station=1" class="form-inline">
   <div class="form-group mb-2">
     <label for="userID" class="sr-only">User ID</label>
     <input type="text" readonly class="form-control-plaintext" id="userID" value="<?php echo $tgID . ' // ' . $username; ?>">
@@ -72,7 +72,7 @@ if ($tg_user !== false) {
   <div class="form-group mx-sm-3 mb-2">
     <label for="station" class="sr-only">Station</label>
 		<select class="form-control" id="station">
-  		<option><?php echo $userStation["station"]; ?></option>
+  		<option value="<?php echo $userStation["stationID"];?>"><?php echo $userStation["station"]; ?></option>
 			<?php
 				foreach($stations["stations"] as $station){
 					if($station["station"] != $userStation["station"]){
@@ -87,7 +87,7 @@ if ($tg_user !== false) {
 
 <div class="topspacer"></div>
 <h3>Or provide a new one</h3>
-<form method="POST" action="?addstation=1" class="">
+<form method="POST" action="stationmgmt.php?addstation=1" class="">
 <div class="form-group">
     
     <input type="text" class="form-control" id="newStation" aria-describedby="stationHelp" placeholder="Station Name">
