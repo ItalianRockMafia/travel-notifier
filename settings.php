@@ -39,21 +39,67 @@ function getTelegramUserData() {
 	}
 	return false;
 }
-
+$tg_user = getTelegramUserData();
 
 if ($tg_user !== false) {
-	$tg_user = getTelegramUserData();
+	$tgID = $tg_user["id"];
+	$firstname = $tg_user["first_name"];
+	$lastname = $tg_user["last_name"];
+	$username = $tg_user["username"];
 
-	$users = json_decode(getCall("https://api.italianrockmafia.ch/api.php/userStation?transform=1&filter=telegramID,eq," . $tg_user["id"]),true);
+	$userStations = json_decode(getCall("https://api.italianrockmafia.ch/api.php/userStation?transform=1&filter=telegramID,eq," . $tg_user["id"]),true);
+	$stations =  json_decode(getCall("https://api.italianrockmafia.ch/api.php/stations?transform=1"), true);
 
-	if(empty($users["users"])){
+	if(empty($userStations["userStation"])){
 		echo '<div class="alert alert-danger" role="alert">
 		You need to register your self in the IRM-Database. Please contact an admin.
 	  </div>';
-		die();
 
+
+	} else {
+	echo '<h1>Hi, ' . $firstname . '!</h1>';
+	echo '<h2>Your username is: <a href="https://t.me/' . $username . '" target="_blank">@' . $username . '</a>.</h2>';
+
+	foreach($userStations["userStation"] as $userStation){
+?>
+<div class="topspacer"></div>
+<h3>Select your station</h3>
+<form method="POST" action="?station=1" class="form-inline">
+  <div class="form-group mb-2">
+    <label for="userID" class="sr-only">User ID</label>
+    <input type="text" readonly class="form-control-plaintext" id="userID" value="<?php echo $tgID . ' // ' . $username; ?>">
+  </div>
+  <div class="form-group mx-sm-3 mb-2">
+    <label for="station" class="sr-only">Station</label>
+		<select class="form-control" id="station">
+  		<option><?php echo $userStation["station"]; ?></option>
+			<?php
+				foreach($stations["stations"] as $station){
+					if($station["station"] != $userStation["station"]){
+					echo '<option value="' . $station["stationID"] . '">' . $station["station"] . '</station>';
+				}}
+			?>
+		</select>
+   
+  </div>
+  <button type="submit" class="btn btn-success mb-2">Confirm Station</button>
+</form>
+
+<div class="topspacer"></div>
+<h3>Or provide a new one</h3>
+<form method="POST" action="?addstation=1" class="">
+<div class="form-group">
+    
+    <input type="text" class="form-control" id="newStation" aria-describedby="stationHelp" placeholder="Station Name">
+    <small id="stationHelp" class="form-text text-muted">Please provide the name, as it is in the SBB mobile app.</small>
+  </div>
+	<button type="submit" class="btn btn-success mb-2">Add Station</button>
+	</form>
+
+<?php
 	}
 
+}
 }
 
 ?>
