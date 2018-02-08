@@ -64,7 +64,7 @@ if ($tg_user !== false) {
 ?>
 <div class="topspacer"></div>
 <h3>Select your station</h3>
-<form method="POST" action="stationmgmt.php?station=1" class="form-inline">
+<form method="POST" action="stationmgmt.php?upatestation=1" class="form-inline">
   <div class="form-group mb-2">
     <label for="userID" class="sr-only">User ID</label>
     <input type="text" readonly class="form-control-plaintext" id="userID" value="<?php echo $tgID . ' // ' . $username; ?>">

@@ -1,10 +1,10 @@
 <?php
 
-if(isset($_GET['station'])){
+if(isset($_GET['upatestation'])){
 
-	$stationID = $_POST["station"];
+	$stationID = $_POST['station'];
 	echo $stationID;
-echo "asdf";
+	echo "asdf";
 }
 
 if(isset($_GET["addstation"])){
