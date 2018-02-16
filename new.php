@@ -12,7 +12,16 @@ session_start();
 		<title>IRM - Meetup planer</title>
 	</head>
 	<body>
+<?php
+// FORM HANDLER
+if(isset($_GET['add'])){
+	$title = htmlspecialchars($_POST['title'], ENT_QUOTES);
+	echo $_POST['startdate'];
+}
 
+
+
+?>
 
 	<nav class="navbar navbar-expand-lg navbar-dark bg-danger">
 	<a class="navbar-brand" href="#">ItalianRockMafia</a>
