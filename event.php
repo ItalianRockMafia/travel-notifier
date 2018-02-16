@@ -1,5 +1,7 @@
 <?php
 session_start();
+$eventID = $_GET['event']
+
 ?>
 <!doctype html>
 <html>
@@ -7,6 +9,7 @@ session_start();
 		<meta charset="utf-8">
  	   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 			<link rel="stylesheet" href="../global/main.css">
+			<link rel="stylesheet" href="travel.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 		<script src="https://use.fontawesome.com/c414fc2c21.js"></script>
 		<title>IRM - Meetup planer</title>
@@ -52,7 +55,22 @@ $config = require "../config.php";
 $tg_user = getTelegramUserData();
 
 if ($tg_user !== false) {
+	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
+	$creator = json_decode(getCall($config->api_url . "users/" . $event['userIDFK'] . "?transform=1"),true);
 
+	echo '<h1>Event: ' . $event['event_title'] . '</h1>';
+	echo '<p class="desc">' . $event['description'] . '</p>';
+	echo '<div class="topspacer"></div>';
+	echo '<p class="desc">Start: ' . $event['startdate'] . ' - ' . $event['enddate'] . '</p>';
+	echo '<p class="desc">Location / Station: ' . $event['station'] . '</p>';
+	
+	echo '<p>More: <a href="' . $event['url'] . '" target="_blank">' . $event['url'] . '</a></p>';
+	echo '<p>Creator: <a href="https://t.me/' . $creator['tgusername'] . '" target="_blank">' . $creator['firstname'] . ' ' . $creator['lastname'] . ' (' . $creator['tgusername'] .')</a></p>';
+?>
+<button type="button" class="btn btn-success">Sign up</button>
+<button type="button" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</button>
+
+<?php
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
