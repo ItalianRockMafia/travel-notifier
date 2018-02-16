@@ -8,6 +8,7 @@ session_start();
  	   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 			<link rel="stylesheet" href="../global/main.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<script src="https://use.fontawesome.com/c414fc2c21.js"></script>
 		<title>IRM - Meetup planer</title>
 	</head>
 	<body>
@@ -54,6 +55,7 @@ if ($tg_user !== false) {
 
 $events = json_decode(getCall($config->api_url . "eventUsers?transform=1"), true);
 ?>
+<h1>Events <i class="fa fa-plus-circle righticon" aria-hidden="true"></i></h1>
 <div class="list-group">
 <?php
 foreach($events['eventUsers'] as $event){
