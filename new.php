@@ -52,17 +52,39 @@ $config = require "../config.php";
 $tg_user = getTelegramUserData();
 
 if ($tg_user !== false) {
-
-$events = json_decode(getCall($config->api_url . "eventUsers?transform=1"), true);
 ?>
-<h1>Events <a href="new.php"><i class="fa fa-plus-circle righticon" aria-hidden="true"></i></a></h1>
-<div class="list-group">
-<?php
-foreach($events['eventUsers'] as $event){
-	echo '<a href="event.php?event=' . $event['eventID'] . '" class="list-group-item list-group-item-action">' . $event["event_title"] . '</a>';
-	
-}
-?></div><?php
+<h1>New Event</h1>
+<form action="?add=1" method="POST">
+  <div class="form-group">
+  <label for="title">Event title</label>
+    <input type="text" class="form-control" name="title" id="title" placeholder="SAUFEN SAUFEN SAUFEN">
+  </div>
+  <div class="form-group">
+  <label for="startdate">Event start</label>
+    <input type="datetime-local" class="form-control" name="startdate" id="startdate" placeholder="2018-27-42 00:00:00">
+  </div>
+  <div class="form-group">
+  <label for="enddate">Event end</label>
+    <input type="datetime-local" class="form-control" name="enddate" id="enddate" placeholder="2018-27-42 00:00:00">
+  </div>
+  <div class="form-group">
+  <label for="url">Event Link</label>
+    <input type="url" class="form-control" name="url" id="url" placeholder="https://italianrockmafia.ch">
+  </div>
+  <div class="form-group">
+  <label for="station">Event Location / Station</label>
+    <input type="text" class="form-control" name="station" id="station" placeholder="Baden">
+	<small id="stationHelp" class="form-text text-muted">Please provide the name, as it is in the SBB mobile app.</small>
+  </div>
+  <div class="form-group">
+  <label for="description">Event Description</label>
+  <textarea class="form-control" id="description" rows="3"></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-success">Submit</button>
+
+</form>
+	</div><?php
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
