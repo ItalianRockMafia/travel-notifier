@@ -59,7 +59,7 @@ $events = json_decode(getCall($config->api_url . "eventUsers?transform=1"), true
 <div class="list-group">
 <?php
 foreach($events['eventUsers'] as $event){
-	echo '<a href="#" class="list-group-item list-group-item-action">' . $event["event_title"] . '</a>';
+	echo '<a href="event.php?event=' . $event['eventID'] . '" class="list-group-item list-group-item-action">' . $event["event_title"] . '</a>';
 	
 }
 ?></div><?php
