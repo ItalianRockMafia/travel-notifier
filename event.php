@@ -31,7 +31,7 @@ $eventID = $_GET['event']
 				<a class="nav-link" href="../settings.php">Settings</a>
 			  </li>
 			  <li class="nav-item active">
-				<a class="nav-link" href="#">Meetup<span class="sr-only">(current)</span></a>
+				<a class="nav-link" href="index.php">Meetup<span class="sr-only">(current)</span></a>
 			  </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
@@ -67,6 +67,7 @@ if ($tg_user !== false) {
 	echo '<p>More: <a href="' . $event['url'] . '" target="_blank">' . $event['url'] . '</a></p>';
 	echo '<p>Creator: <a href="https://t.me/' . $creator['tgusername'] . '" target="_blank">' . $creator['firstname'] . ' ' . $creator['lastname'] . ' (' . $creator['tgusername'] .')</a></p>';
 ?>
+<a href="index.php"><button type="button" class="btn btn-success">Back</button></a>
 <button type="button" class="btn btn-success">Sign up</button>
 <button type="button" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</button>
 
