@@ -52,6 +52,13 @@ $config = require "../config.php";
 $tg_user = getTelegramUserData();
 
 if ($tg_user !== false) {
+	$_SESSION['tgID'] = $tg_user['id'];
+	$irm_users = json_decode(getCall($config->api_url . "users?transform=1&filter=telegramID,eq," . $tg_user['id']), true);
+	foreach($irm_users['users'] as $user){
+		$irm_user['id'] = $user['userID'];
+	}
+	
+	$_SESSION['irmID'] = $irm_user['id'];
 
 $events = json_decode(getCall($config->api_url . "eventUsers?transform=1"), true);
 ?>

@@ -1,5 +1,8 @@
 <?php
 session_start();
+require '../global/functions/apicalls.php';
+require '../global/functions/telegram.php';
+$config = require "../config.php";
 ?>
 <!doctype html>
 <html>
@@ -16,7 +19,20 @@ session_start();
 // FORM HANDLER
 if(isset($_GET['add'])){
 	$title = htmlspecialchars($_POST['title'], ENT_QUOTES);
-	echo $_POST['startdate'];
+	$startdate= strtotime($_POST['startdate']);
+	$startdate = date("Y-m-d H:i:s",$startdate);
+	$endate = strtotime($_POST['endate']);
+	$endate = date("Y-m-d H:i:s",$endate);
+	$eventlink = htmlspecialchars($_POST['url'], ENT_QUOTES);
+	$station = htmlspecialchars($_POST['station'], ENT_QUOTES);
+	$desc = htmlspecialchars($_POST['description'], ENT_QUOTES);
+	$irmID = $_SESSION['irmID'];
+
+	$postfields = "{\n\t\"event_title\": \"$title\", \n\t\"startdate\": \"$startdate\",\n\t\"enddate\": \"$endate\",\n\t\"url\": \"$eventlink\",\n\t\"station\": \"$station\",\n\t\"description\": \"$desc\",\n\t\"userIDFK\": \"$irmID\"\n\t\n}";
+	$eventID = postCall($config->api_url . "events", $postfields);
+
+	if(is_numeric($eventID)){
+	}
 }
 
 
@@ -53,10 +69,6 @@ if(isset($_GET['add'])){
 
 <?php
 
-require '../global/functions/apicalls.php';
-require '../global/functions/telegram.php';
-$config = require "../config.php";
-
 
 $tg_user = getTelegramUserData();
 
@@ -66,15 +78,15 @@ if ($tg_user !== false) {
 <form action="?add=1" method="POST">
   <div class="form-group">
   <label for="title">Event title</label>
-    <input type="text" class="form-control" name="title" id="title" placeholder="SAUFEN SAUFEN SAUFEN">
+    <input type="text" class="form-control" name="title" id="title" placeholder="SAUFEN SAUFEN SAUFEN" required>
   </div>
   <div class="form-group">
   <label for="startdate">Event start</label>
-    <input type="datetime-local" class="form-control" name="startdate" id="startdate" placeholder="2018-27-42 00:00:00">
+    <input type="datetime-local" class="form-control" name="startdate" id="startdate" value="2018-12-31T11:00" placeholder="2018-27-42 00:00:00" required>
   </div>
   <div class="form-group">
   <label for="enddate">Event end</label>
-    <input type="datetime-local" class="form-control" name="enddate" id="enddate" placeholder="2018-27-42 00:00:00">
+    <input type="datetime-local" class="form-control" name="enddate" id="enddate" value="2018-12-31T12:00" placeholder="2018-27-42 00:00:00" required>
   </div>
   <div class="form-group">
   <label for="url">Event Link</label>
@@ -82,12 +94,12 @@ if ($tg_user !== false) {
   </div>
   <div class="form-group">
   <label for="station">Event Location / Station</label>
-    <input type="text" class="form-control" name="station" id="station" placeholder="Baden">
+    <input type="text" class="form-control" name="station" id="station" placeholder="Baden" required>
 	<small id="stationHelp" class="form-text text-muted">Please provide the name, as it is in the SBB mobile app.</small>
   </div>
   <div class="form-group">
   <label for="description">Event Description</label>
-  <textarea class="form-control" id="description" rows="3"></textarea>
+  <textarea class="form-control" name="description" id="description" rows="3"></textarea>
   </div>
 
   <button type="submit" class="btn btn-success">Submit</button>
