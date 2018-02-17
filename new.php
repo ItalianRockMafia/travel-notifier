@@ -32,7 +32,11 @@ if(isset($_GET['add'])){
 	$eventID = postCall($config->api_url . "events", $postfields);
 
 	if(is_numeric($eventID)){
-	}
+		$alertText = urlencode('<strong>New Event: </strong>' . $title   .chr(10). '  test');
+	//	$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;
+	$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=10024714&parse_mode=HTML&text=" . $alertText;
+	getCall($alertURL);
+}
 }
 
 
