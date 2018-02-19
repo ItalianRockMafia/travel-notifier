@@ -96,11 +96,13 @@ $enddate = strtotime($enddate);
 ?>
 <a href="index.php"><button type="button" class="btn btn-success">Back</button></a>
 <?php
-$StatusChecker = json_decode(getCall($config->api_url . 'attendes?transform=1&filter=userIDFK,eq,' . $_SESSION['irmID'] . '&filter=eventIDFK,eq,' . $eventID), true);
+$url = $config->api_url . 'attendes?transform=1&filter[]=userIDFK,eq,' . $_SESSION['irmID'] . '&filter[]=eventIDFK,eq,' . $eventID . "&satisfy=all";
+
+$StatusChecker = json_decode(getCall($url), true);
 
 foreach($StatusChecker['attendes'] as $attende){
 
-	if($eventID == $attende['eventIDFK']){
+	if($eventID == $attende['eventIDFK'] && $_SESSION['irmID'] == $attende['userIDFK']){
 		echo '<a href="?event=' . $eventID . '&cancel=1"><button type="button" class="btn btn-success">Cancel</button></a>';
 	}
 
