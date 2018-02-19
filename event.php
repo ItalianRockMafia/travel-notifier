@@ -1,5 +1,7 @@
 <?php
 session_start();
+$eventID = $_GET['event']
+
 ?>
 <!doctype html>
 <html>
@@ -7,6 +9,7 @@ session_start();
 		<meta charset="utf-8">
  	   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 			<link rel="stylesheet" href="../global/main.css">
+			<link rel="stylesheet" href="travel.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 		<script src="https://use.fontawesome.com/c414fc2c21.js"></script>
 		<title>IRM - Meetup planer</title>
@@ -28,7 +31,7 @@ session_start();
 				<a class="nav-link" href="../settings.php">Settings</a>
 			  </li>
 			  <li class="nav-item active">
-				<a class="nav-link" href="#">Meetup<span class="sr-only">(current)</span></a>
+				<a class="nav-link" href="index.php">Meetup<span class="sr-only">(current)</span></a>
 			  </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
@@ -52,24 +55,23 @@ $config = require "../config.php";
 $tg_user = getTelegramUserData();
 
 if ($tg_user !== false) {
-	$_SESSION['tgID'] = $tg_user['id'];
-	$irm_users = json_decode(getCall($config->api_url . "users?transform=1&filter=telegramID,eq," . $tg_user['id']), true);
-	foreach($irm_users['users'] as $user){
-		$irm_user['id'] = $user['userID'];
-	}
-	
-	$_SESSION['irmID'] = $irm_user['id'];
+	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
+	$creator = json_decode(getCall($config->api_url . "users/" . $event['userIDFK'] . "?transform=1"),true);
 
-$events = json_decode(getCall($config->api_url . "eventUsers?transform=1"), true);
-?>
-<h1>Events <a href="new.php"><i class="fa fa-plus-circle righticon" aria-hidden="true"></i></a></h1>
-<div class="list-group">
-<?php
-foreach($events['eventUsers'] as $event){
-	echo '<a href="event.php?event=' . $event['eventID'] . '" class="list-group-item list-group-item-action">' . $event["event_title"] . '</a>';
+	echo '<h1>Event: ' . $event['event_title'] . '</h1>';
+	echo '<p class="desc">' . $event['description'] . '</p>';
+	echo '<div class="topspacer"></div>';
+	echo '<p class="desc">Start: ' . $event['startdate'] . ' - ' . $event['enddate'] . '</p>';
+	echo '<p class="desc">Location / Station: ' . $event['station'] . '</p>';
 	
-}
-?></div><?php
+	echo '<p>More: <a href="' . $event['url'] . '" target="_blank">' . $event['url'] . '</a></p>';
+	echo '<p>Creator: <a href="https://t.me/' . $creator['tgusername'] . '" target="_blank">' . $creator['firstname'] . ' ' . $creator['lastname'] . ' (' . $creator['tgusername'] .')</a></p>';
+?>
+<a href="index.php"><button type="button" class="btn btn-success">Back</button></a>
+<button type="button" class="btn btn-success">Sign up</button>
+<button type="button" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</button>
+
+<?php
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
