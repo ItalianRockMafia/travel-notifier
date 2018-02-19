@@ -32,10 +32,15 @@ if(isset($_GET['add'])){
 	$postfields = "{\n\t\"event_title\": \"$title\", \n\t\"startdate\": \"$startdate\",\n\t\"enddate\": \"$endate\",\n\t\"url\": \"$eventlink\",\n\t\"station\": \"$station\",\n\t\"description\": \"$desc\",\n\t\"userIDFK\": \"$irmID\"\n\t\n}";
 	$eventID = postCall($config->api_url . "events", $postfields);
 
-	if(is_numeric($eventID)){
-		$alertText = urlencode('<strong>New Event: </strong>' . $title   .chr(10). 'Start: ' . $startdate . chr(10) . 'End: ' . $endate . chr(10) . 'Where: ' . $station . chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">View on web</a>');
+	$startdate = strtotime($startdate);
+	$endate = strtotime($endate);
 	
-		$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;
+	if(is_numeric($eventID)){
+		$alertText = urlencode('<strong>New Event: </strong>' . $title   .chr(10). 'Start: ' . date("l, d.m.Y H:m", $startdate) . chr(10) . 'End: ' . date("d.m.Y H:m", $endate) . chr(10) . 'Where: ' . $station . chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">View on web</a>');
+	
+		//$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;
+		$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=10024714&parse_mode=HTML&text=" . $alertText;
+		
 		getCall($alertURL);
 		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 		
