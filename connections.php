@@ -6,6 +6,106 @@ require '../global/functions/telegram.php';
 require '../global/functions/irm.php';
 $config = require "../config.php";
 
+$event2del = $_GET['delete'];
+if(isset($_GET['delete'])){
+	deleteCall($config->api_url . "events/" . $event2del);
+	header('Location: https://italianrockmafia.ch/meetup/index.php');
+}
+
+if(isset($_GET['signup'])){
+
+	$user = $_SESSION['irmID'];
+	$postfields = "{\n \t \"userIDFK\": \"$user\", \n \t \"eventIDFK\": \"$eventID\" \n }";
+	$result = postCall($config->api_url . "attendes", $postfields);
+	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+}
+
+if(isset($_GET['cancel'])){
+		$list = json_decode(getCall($config->api_url . 'attendes?transform=1&filter[]=userIDFK,eq,' . $_SESSION['irmID'] . '&filter[]=eventIDFK,eq,' . $eventID . "satisfy=all"), true);
+		foreach($list['attendes'] as $user){
+			$attende2del = $user['attendeID'];
+		}
+	
+		$result = deleteCall($config->api_url . "attendes/" . $attende2del);
+		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+	}
+
+?>
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+ 	   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+			<link rel="stylesheet" href="../global/main.css">
+			<link rel="stylesheet" href="travel.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<script src="https://use.fontawesome.com/c414fc2c21.js"></script>
+		<title>IRM - Meetup planer</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+		
+
+		<script>
+        $(function () {
+         
+            function reset() {
+                $('table.connections tr.connection').show();
+                $('table.connections tr.section').hide();
+            }
+            $('table.connections tr.connection').bind('click', function (e) {
+                reset();
+                var $this = $(this);
+                $this.hide();
+                $this.nextAll('tr.section').show();
+                if ('replaceState' in window.history) {
+                    history.replaceState({}, '', '?' + $('.pager').serialize() + '&c=' + $this.data('c'));
+                }
+            });
+            $('.station input').bind('focus', function () {
+                var that = this;
+                setTimeout(function () {
+                    that.setSelectionRange(0, 9999);
+                }, 10);
+            });
+        });
+    </script>
+
+	</head>
+	<body>
+
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+	<a class="navbar-brand" href="#">ItalianRockMafia</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	  </button>
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="navbar-nav mr-auto">
+		<li class="nav-item">
+        				<a class="nav-link" href="../main.php">Home</a>
+      				</li>
+			  <li class="nav-item">
+				<a class="nav-link" href="../settings.php">Settings</a>
+			  </li>
+			  <li class="nav-item active">
+				<a class="nav-link" href="index.php">Events<span class="sr-only">(current)</span></a>
+			  </li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+				<li class="nav-item">
+        			<a class="nav-link" href="https://italianrockmafia.ch/login.php?logout=1">Logout</a>
+      			</li>
+		</ul>
+	</div>
+</nav>
+<div class="topspacer"></div>
+<main role="main">
+	<div class="container">
+
+<?php
+$tg_user = getTelegramUserData();
+saveSessionArray($tg_user);
+if ($tg_user !== false) {
+
 $userArray = json_decode(getCall($config->api_url . "userStation?transform=1&filter=userID,eq," . $_SESSION['irmID']),true);
 foreach($userArray['userStation'] as $user){
 $station = $user["station"];
@@ -45,7 +145,27 @@ if (isset($response->stations->to[0])) {
 		}
 	}
 }
+
+echo 'Your connection from: ' . $from . '<br>
+to: ' . $to . '<br>';
+
+foreach($response->connections as $connection){
+	echo '<br>';
+	echo 'departure: ' . date('d.m.Y H:i', strtotime($connection->from->departure)) . '<br>';
+	echo 'arrival: ' . date('d.m.Y H:i', strtotime($connection->to->arrival)) . '<br>duration:';
+	 echo (substr($connection->duration, 0, 2) > 0) ? htmlentities(trim(substr($connection->duration, 0, 2), '0')).'d ' : ''; 
+	echo htmlentities(trim(substr($connection->duration, 3, 1), '0').substr($connection->duration, 4, 4));?>′<br/><?php
+	//echo htmlentities(implode(', ', $connection->products));
+	foreach ($connection->sections as $section){
+		echo date('H:i', strtotime($section->departure->departure)) . ' from: ' . htmlentities($section->departure->station->name, ENT_QUOTES, 'UTF-8') . '<br>';
+		echo htmlentities($section->journey->name, ENT_QUOTES, 'UTF-8') . ' number: ' . htmlentities($section->journey->number, ENT_QUOTES, 'UTF-8') . '<br>';
+		echo date('H:i', strtotime($section->arrival->arrival)) . ' ' . htmlentities($section->arrival->station->name, ENT_QUOTES, 'UTF-8'); 
+		echo '<br>';
+	}
+}
 ?>
+
+
 
 <table class="table connections">
 <colgroup>
@@ -171,3 +291,20 @@ if (isset($response->stations->to[0])) {
 	</tbody>
 <?php endforeach; ?>
 </table>
+
+<?php
+} else {
+	echo '
+	<div class="alert alert-danger" role="alert">
+	<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/login.php">login</a> first.
+	  </div>
+';
+}
+?>
+</div>
+</main>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	</body>
+</html>
