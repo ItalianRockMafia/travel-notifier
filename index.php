@@ -34,7 +34,7 @@ $date = new DateTime();
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="nav-item">
-        			<a class="nav-link" href="login.php?logout=1">Logout</a>
+        			<a class="nav-link" href="https://italianrockmafia.chlogin.php?logout=1">Logout</a>
       			</li>
 		</ul>
 	</div>
@@ -78,7 +78,7 @@ foreach($events['eventUsers'] as $event){
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
-	<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/">login</a> first.
+	<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/login.php">login</a> first.
   </div>
 ';
 }
