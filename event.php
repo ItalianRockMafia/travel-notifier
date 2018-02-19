@@ -80,10 +80,15 @@ if ($tg_user !== false) {
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
 	$creator = json_decode(getCall($config->api_url . "users/" . $event['userIDFK'] . "?transform=1"),true);
 
+	$startdate =  $event['startdate'];
+	$enddate = $event['enddate'];
+$startdate = strtotime($startdate);
+$enddate = strtotime($enddate);
+
 	echo '<h1>Event: ' . $event['event_title'] . '</h1>';
 	echo '<p class="desc">' . $event['description'] . '</p>';
 	echo '<div class="topspacer"></div>';
-	echo '<p class="desc">Start: ' . $event['startdate'] . ' - ' . $event['enddate'] . '</p>';
+	echo '<p class="desc">Start: ' . date("l, d.m.Y H:m", $startdate) . ' - ' . date("d.m.Y H:m", $enddate) . '</p>';
 	echo '<p class="desc">Location / Station: ' . $event['station'] . '</p>';
 	
 	echo '<p>More: <a href="' . $event['url'] . '" target="_blank">' . $event['url'] . '</a></p>';
