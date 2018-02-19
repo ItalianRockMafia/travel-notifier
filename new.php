@@ -119,8 +119,8 @@ if ($tg_user !== false) {
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
-	<strong>Error.</strong> You need to login first
-  </div>
+	<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/">login</a> first.
+	  </div>
 ';
 }
 ?>

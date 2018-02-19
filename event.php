@@ -81,7 +81,7 @@ if($creator['tgusername']  == $tg_user['username']){
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
-	<strong>Error.</strong> You need to login first
+	<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/">login</a> first.
   </div>
 ';
 }
