@@ -64,7 +64,7 @@ if(isset($_GET['cancel'])){
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="nav-item">
-        			<a class="nav-link" href="https://italianrockmafia.chlogin.php?logout=1">Logout</a>
+        			<a class="nav-link" href="https://italianrockmafia.ch/login.php?logout=1">Logout</a>
       			</li>
 		</ul>
 	</div>
