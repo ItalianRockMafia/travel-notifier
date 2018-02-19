@@ -72,11 +72,20 @@ if ($tg_user !== false) {
 ?>
 <a href="index.php"><button type="button" class="btn btn-success">Back</button></a>
 <button type="button" class="btn btn-success">Sign up</button>
-<button type="button" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</button>
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#comingSoon"><i class="fa fa-telegram"></i> Send connection</button>
 <?php 
 if($creator['tgusername']  == $tg_user['username']){
 	echo '<a href="?delete=' . $event['eventID'] . '"><button type="button" class="btn btn-danger">Delete Event</button></a>';
 }
+
+?>
+<div class="topspacer"></div>
+<h2>Attendes:</h2>
+
+
+
+
+<?php
 
 } else {
 	echo '
@@ -86,6 +95,28 @@ if($creator['tgusername']  == $tg_user['username']){
 ';
 }
 ?>
+
+<!-- Modal -->
+<div class="modal fade" id="comingSoon" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Coming Soon</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        This feature is still in development.
+      </div>
+      <div class="modal-footer">
+        
+        <a href="?event=<?php echo $eventID; ?>"><button type="button" class="btn btn-success">OK</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
 </main>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
