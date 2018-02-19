@@ -8,7 +8,7 @@ $config = require "../config.php";
 $event2del = $_GET['delete'];
 if(isset($_GET['delete'])){
 	deleteCall($config->api_url . "events/" . $event2del);
-	header('Location: https://italianrockmafia.ch/meetup/index.html');
+	header('Location: https://italianrockmafia.ch/meetup/index.php');
 }
 
 ?>
