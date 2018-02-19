@@ -3,6 +3,7 @@ session_start();
 require '../global/functions/apicalls.php';
 require '../global/functions/telegram.php';
 $config = require "../config.php";
+$now = new datetime();
 ?>
 <!doctype html>
 <html>
@@ -92,11 +93,11 @@ if ($tg_user !== false) {
   </div>
   <div class="form-group">
   <label for="startdate">Event start</label>
-    <input type="datetime-local" class="form-control" name="startdate" id="startdate" value="2018-12-31T11:00" placeholder="2018-27-42 00:00:00" required>
+    <input type="datetime-local" class="form-control" name="startdate" id="startdate" value="<?php echo $now->format('Y-m-d\TH:i:s');?>" placeholder="<?php echo $now->format('Y-m-d H:i:s');?>" required>
   </div>
   <div class="form-group">
   <label for="enddate">Event end</label>
-    <input type="datetime-local" class="form-control" name="enddate" id="enddate" value="2018-12-31T12:00" placeholder="2018-27-42 00:00:00" required>
+    <input type="datetime-local" class="form-control" name="enddate" id="enddate" value="<?php echo $now->format('Y-m-d\TH:i:s');?>" placeholder="2018-27-42 00:00:00" required>
   </div>
   <div class="form-group">
   <label for="url">Event Link</label>
