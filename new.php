@@ -22,7 +22,7 @@ if(isset($_GET['add'])){
 	$title = htmlspecialchars($_POST['title'], ENT_QUOTES);
 	$startdate= strtotime($_POST['startdate']);
 	$startdate = date("Y-m-d H:i:s",$startdate);
-	$endate = strtotime($_POST['endate']);
+	$endate = strtotime($_POST['enddate']);
 	$endate = date("Y-m-d H:i:s",$endate);
 	$eventlink = htmlspecialchars($_POST['url'], ENT_QUOTES);
 	$station = htmlspecialchars($_POST['station'], ENT_QUOTES);
@@ -33,9 +33,8 @@ if(isset($_GET['add'])){
 	$eventID = postCall($config->api_url . "events", $postfields);
 
 	if(is_numeric($eventID)){
-		$alertText = urlencode('<strong>New Event: </strong>' . $title   .chr(10). ' start: ' . $startdate . chr(10) . 'end: ' . $endate . chr(10) . 'Where: ' . $station . chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">View on web</a>');
-	//	$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;
-	$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=10024714&parse_mode=HTML&text=" . $alertText;
+		$alertText = urlencode('<strong>New Event: </strong>' . $title   .chr(10). 'Start: ' . $startdate . chr(10) . 'End: ' . $endate . chr(10) . 'Where: ' . $station . chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">View on web</a>');
+	$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;
 
 } else {
 	$alertText = "Error saving event.";
@@ -93,11 +92,11 @@ if ($tg_user !== false) {
   </div>
   <div class="form-group">
   <label for="startdate">Event start</label>
-    <input type="datetime-local" class="form-control" name="startdate" id="startdate" value="<?php echo $now->format('Y-m-d\TH:i:s');?>" placeholder="<?php echo $now->format('Y-m-d H:i:s');?>" required>
-  </div>
+    <input type="datetime-local" class="form-control" name="startdate" id="startdate" value="<?php echo $now->format('Y-m-d\TH:i');?>" placeholder="<?php echo $now->format('Y-m-d H:i:s');?>" required>
+	</div>
   <div class="form-group">
   <label for="enddate">Event end</label>
-    <input type="datetime-local" class="form-control" name="enddate" id="enddate" value="<?php echo $now->format('Y-m-d\TH:i:s');?>" placeholder="2018-27-42 00:00:00" required>
+    <input type="datetime-local" class="form-control" name="enddate" id="enddate" value="<?php echo $now->format('Y-m-d\TH:i');?>" placeholder="2018-27-42 00:00:00" required>
   </div>
   <div class="form-group">
   <label for="url">Event Link</label>
