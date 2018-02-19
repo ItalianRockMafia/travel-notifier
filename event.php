@@ -3,6 +3,7 @@ session_start();
 $eventID = $_GET['event'];
 require '../global/functions/apicalls.php';
 require '../global/functions/telegram.php';
+require '../global/functions/irm.php';
 $config = require "../config.php";
 
 $event2del = $_GET['delete'];
@@ -10,6 +11,24 @@ if(isset($_GET['delete'])){
 	deleteCall($config->api_url . "events/" . $event2del);
 	header('Location: https://italianrockmafia.ch/meetup/index.php');
 }
+
+if(isset($_GET['signup'])){
+
+	$user = $_SESSION['irmID'];
+	$postfields = "{\n \t \"userIDFK\": \"$user\", \n \t \"eventIDFK\": \"$eventID\" \n }";
+	$result = postCall($config->api_url . "attendes", $postfields);
+	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+}
+
+if(isset($_GET['cancel'])){
+		$list = json_decode(getCall($config->api_url . 'attendes?transform=1&filter=userIDFK,eq,' . $_SESSION['irmID'] . '&filter=eventIDFK,eq,' . $eventID), true);
+		foreach($list['attendes'] as $user){
+			$attende2del = $user['attendeID'];
+		}
+	
+		$result = deleteCall($config->api_url . "attendes/" . $attende2del);
+		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+	}
 
 ?>
 <!doctype html>
@@ -56,7 +75,7 @@ if(isset($_GET['delete'])){
 
 <?php
 $tg_user = getTelegramUserData();
-
+saveSessionArray($tg_user);
 if ($tg_user !== false) {
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
 	$creator = json_decode(getCall($config->api_url . "users/" . $event['userIDFK'] . "?transform=1"),true);
@@ -71,7 +90,22 @@ if ($tg_user !== false) {
 	echo '<p>Creator: <a href="https://t.me/' . $creator['tgusername'] . '" target="_blank">' . $creator['firstname'] . ' ' . $creator['lastname'] . ' (' . $creator['tgusername'] .')</a></p>';
 ?>
 <a href="index.php"><button type="button" class="btn btn-success">Back</button></a>
-<button type="button" class="btn btn-success">Sign up</button>
+<?php
+$StatusChecker = json_decode(getCall($config->api_url . 'attendes?transform=1&filter=userIDFK,eq,' . $_SESSION['irmID'] . '&filter=eventIDFK,eq,' . $eventID), true);
+
+foreach($StatusChecker['attendes'] as $attende){
+
+	if($eventID == $attende['eventIDFK']){
+		echo '<a href="?event=' . $eventID . '&cancel=1"><button type="button" class="btn btn-success">Cancel</button></a>';
+	}
+
+}
+if(empty($StatusChecker['attendes'])){
+	echo '<a href="?event=' . $eventID . '&signup=1"><button type="button" class="btn btn-success">Sign up</button></a>';
+} 
+
+?>
+
 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#comingSoon"><i class="fa fa-telegram"></i> Send connection</button>
 <?php 
 if($creator['tgusername']  == $tg_user['username']){
@@ -81,11 +115,14 @@ if($creator['tgusername']  == $tg_user['username']){
 ?>
 <div class="topspacer"></div>
 <h2>Attendes:</h2>
-
-
-
-
+<ol>
 <?php
+$attendes = json_decode(getCall($config->api_url . 'eventAttendes?transform=1&filter=eventIDFK,eq,' . $eventID), true);
+foreach($attendes['eventAttendes'] as $attende){
+	
+echo '<li><a href="https://t.me/' . $attende["tgusername"] . '" target="_blank">' . $attende["firstname"] . ' ' . $attende["lastname"] . ' (' . $attende["tgusername"] . ')</a></li>';
+}
+echo '</ol>';
 
 } else {
 	echo '
