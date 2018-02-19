@@ -21,7 +21,7 @@ if(isset($_GET['signup'])){
 }
 
 if(isset($_GET['cancel'])){
-		$list = json_decode(getCall($config->api_url . 'attendes?transform=1&filter=userIDFK,eq,' . $_SESSION['irmID'] . '&filter=eventIDFK,eq,' . $eventID), true);
+		$list = json_decode(getCall($config->api_url . 'attendes?transform=1&filter[]=userIDFK,eq,' . $_SESSION['irmID'] . '&filter[]=eventIDFK,eq,' . $eventID . "satisfy=all"), true);
 		foreach($list['attendes'] as $user){
 			$attende2del = $user['attendeID'];
 		}
