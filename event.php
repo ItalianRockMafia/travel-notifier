@@ -1,6 +1,15 @@
 <?php
 session_start();
-$eventID = $_GET['event']
+$eventID = $_GET['event'];
+require '../global/functions/apicalls.php';
+require '../global/functions/telegram.php';
+$config = require "../config.php";
+
+$event2del = $_GET['delete'];
+if(isset($_GET['delete'])){
+	deleteCall($config->api_url . "events/" . $event2del);
+	header('Location: https://italianrockmafia.ch/meetup/index.html');
+}
 
 ?>
 <!doctype html>
@@ -46,12 +55,6 @@ $eventID = $_GET['event']
 	<div class="container">
 
 <?php
-
-require '../global/functions/apicalls.php';
-require '../global/functions/telegram.php';
-$config = require "../config.php";
-
-
 $tg_user = getTelegramUserData();
 
 if ($tg_user !== false) {
@@ -70,8 +73,11 @@ if ($tg_user !== false) {
 <a href="index.php"><button type="button" class="btn btn-success">Back</button></a>
 <button type="button" class="btn btn-success">Sign up</button>
 <button type="button" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</button>
+<?php 
+if($creator['tgusername']  == $tg_user['username']){
+	echo '<a href="?delete=' . $event['eventID'] . '"><button type="button" class="btn btn-danger">Delete Event</button></a>';
+}
 
-<?php
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
