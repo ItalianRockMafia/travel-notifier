@@ -59,7 +59,7 @@ if(isset($_GET['cancel'])){
 				<a class="nav-link" href="../settings.php">Settings</a>
 			  </li>
 			  <li class="nav-item active">
-				<a class="nav-link" href="index.php">Meetup<span class="sr-only">(current)</span></a>
+				<a class="nav-link" href="index.php">Events<span class="sr-only">(current)</span></a>
 			  </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">

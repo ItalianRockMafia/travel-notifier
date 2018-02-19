@@ -29,7 +29,7 @@ $date = new DateTime();
         				<a class="nav-link" href="https://italianrockmafia.ch/settings.php">Home</a>
       				</li>
 			  <li class="nav-item active">
-				<a class="nav-link" href="https://italianrockmafia.ch/meetup">Meetup <span class="sr-only">(current)</span></a>
+				<a class="nav-link" href="https://italianrockmafia.ch/meetup">Events <span class="sr-only">(current)</span></a>
 			  </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
