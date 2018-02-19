@@ -46,6 +46,7 @@ if(isset($_GET['add'])){
 } else {
 	$alertText = "Error saving event.";
 	$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $_SESSION['tgID'] . "&parse_mode=HTML&text=" . $alertText;
+
 	getCall($alertURL);
 	header('Location: https://italianrockmafia.ch/meetup/');
 }
