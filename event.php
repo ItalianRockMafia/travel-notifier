@@ -116,7 +116,7 @@ if(empty($StatusChecker['attendes'])){
 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#comingSoon"><i class="fa fa-telegram"></i> Send connection</button>
 <?php 
 if($creator['tgusername']  == $tg_user['username']){
-	echo '<a href="?delete=' . $event['eventID'] . '"><button type="button" class="btn btn-danger">Delete Event</button></a>';
+	echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteEvent">Delete Event</button>';
 }
 
 ?>
@@ -154,8 +154,29 @@ echo '</ol>';
         This feature is still in development.
       </div>
       <div class="modal-footer">
-        
-        <a href="?event=<?php echo $eventID; ?>"><button type="button" class="btn btn-success">OK</button></a>
+			<button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="deleteEvent" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Are you sure?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this event?
+      </div>
+      <div class="modal-footer">
+			<button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+			<?php echo '<a href="?delete=' . $event['eventID'] . '"><button type="button" class="btn btn-danger">Yes</button></a>'; ?>
       </div>
     </div>
   </div>
