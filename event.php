@@ -77,6 +77,15 @@ if(isset($_GET['cancel'])){
 $tg_user = getTelegramUserData();
 saveSessionArray($tg_user);
 if ($tg_user !== false) {
+
+	if (isset($_GET['sent'])){
+		echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+		Connection sent.
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>';
+	}
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
 	$creator = json_decode(getCall($config->api_url . "users/" . $event['userIDFK'] . "?transform=1"),true);
 
@@ -112,8 +121,8 @@ if(empty($StatusChecker['attendes'])){
 
 ?>
 
-<button type="button" class="btn btn-success" data-toggle="modal" data-target="#comingSoon"><i class="fa fa-telegram"></i> Send connection</button>
-<?php 
+<?php echo '<a href="connections.php?event=' . $eventID . '&send=1><button type="button" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</button></a>';
+
 if($creator['tgusername']  == $tg_user['username']){
 	echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteEvent">Delete Event</button>';
 }

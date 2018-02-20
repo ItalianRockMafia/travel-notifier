@@ -179,7 +179,7 @@ $sendText .=  chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/c
 
 $alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=". $_SESSION['tgID']. "&parse_mode=HTML&text=" . urlencode($sendText);
 getCall($alertURL);
-header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&sent=1');
 }
 ?>
 <div class="alert alert-primary alert-dismissible fade show" role="alert">
