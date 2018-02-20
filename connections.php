@@ -6,6 +6,7 @@ require '../global/functions/telegram.php';
 require '../global/functions/irm.php';
 $config = require "../config.php";
 
+require 'functions/render.php';
 
 ?>
 <!doctype html>
@@ -84,80 +85,16 @@ $config = require "../config.php";
 $tg_user = getTelegramUserData();
 saveSessionArray($tg_user);
 if ($tg_user !== false) {
-
-$userArray = json_decode(getCall($config->api_url . "userStation?transform=1&filter=userID,eq," . $_SESSION['irmID']),true);
-foreach($userArray['userStation'] as $user){
-$station = $user["station"];
-}
-
+ 
+$station = $_SESSION['station'];
 $eventArray = json_decode(getCall($config->api_url . "events/" . $eventID . "&transform=1"), true);
-
 $eventStation = $eventArray["station"];
 $startdate = date("Y-m-d", strtotime($eventArray['startdate']));
 $starttime = date("H:i", strtotime($eventArray['startdate']));
-
 $url = "http://transport.opendata.ch/v1/connections?from=" . urlencode($station) . "&to=" . urlencode($eventStation) . "&date=" .$startdate . "&time=". $starttime . "&isArrivalTime=1";
 $response = json_decode(file_get_contents($url));
 
 
-if ($response->from) {
-	$from = $response->from->name;
-	$x = $response->from->coordinate->x;
-	$y = $response->from->coordinate->y;
-	$fromLink = '<a href="https://www.google.ch/maps/@' . $x .',' . $y . ',18z">';
-}
-if ($response->to) {
-	$to = $response->to->name;
-	$x = $response->to->coordinate->x;
-	$y = $response->to->coordinate->y;
-	$toLink = '<a href="https://www.google.ch/maps/@' . $x .',' . $y . ',18z">';
-}
-if (isset($response->stations->from[0])) {
-	if ($response->stations->from[0]->score < 101) {
-		foreach (array_slice($response->stations->from, 1, 3) as $station) {
-			if ($station->score > 97) {
-				$stationsFrom[] = $station->name;
-			}
-		}
-	}
-}
-if (isset($response->stations->to[0])) {
-	if ($response->stations->to[0]->score < 101) {
-		foreach (array_slice($response->stations->to, 1, 3) as $station) {
-			if ($station->score > 97) {
-				$stationsTo[] = $station->name;
-			}
-		}
-	}
-}
-
-if(isset($_GET['send'])){
-$sendText = 'Your connection from: ' .$fromLink . $from . '</a>' . chr(10). 'to: ' . $toLink . $to . '</a>' . chr(10) . 'departure: ' . date('d.m.Y H:i', strtotime($response->connections[0]->from->departure)) . chr(10) . 
-'arrival: ' . date('d.m.Y H:i', strtotime($response->connections[0]->to->arrival)) . chr(10). 'duration: ';
-
-$duration =  (substr($response->connections[0]->duration, 0, 2) > 0) ? htmlentities(trim(substr($response->connections[0]->duration, 0, 2), '0')).'d ' : '';
-
-$duration .= htmlentities(trim(substr($response->connections[0]->duration, 3, 1), '0').substr($response->connections[0]->duration, 4, 4)) .'′' . chr(10);
-$sendText .= $duration . chr(10) . 'journey:' . chr(10);
-
-foreach ($response->connections[0]->sections as $section){
-	$fromx = $section->departure->station->coordinate->x;
-	$fromy = $section->departure->station->coordinate->y;
-	$fromLink = '<a href="https://www.google.ch/maps/@' . $fromx .',' . $fromy . ',18z">';
-	$tox = $section->arrival->station->coordinate->x;
-	$toy = $section->arrival->station->coordinate->y;
-	$toLink = '<a href="https://www.google.ch/maps/@' . $tox .',' . $toy . ',18z">';
-	$sendText .=  date('H:i', strtotime($section->departure->departure)) . ' from ' . $fromLink .  htmlentities($section->departure->station->name, ENT_QUOTES, 'UTF-8') . '</a>' . chr(10);
-	$sendText .=  htmlentities($section->journey->name, ENT_QUOTES, 'UTF-8') . ' number: ' . htmlentities($section->journey->number, ENT_QUOTES, 'UTF-8') . chr(10);
-	$sendText .=  date('H:i', strtotime($section->arrival->arrival)) . ' to ' . $toLink . htmlentities($section->arrival->station->name, ENT_QUOTES, 'UTF-8') . '</a>' .chr(10); 
-	
-}
-$sendText .=  chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/connections.php?event=' . $eventID . '">View connections on web</a>';
-
-$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=". $_SESSION['tgID']. "&parse_mode=HTML&text=" . urlencode($sendText);
-getCall($alertURL);
-header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&sent=1');
-}
 ?>
 <div class="alert alert-primary alert-dismissible fade show" role="alert">
   Click on a connection to enlarge.
