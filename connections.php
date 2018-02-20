@@ -6,29 +6,6 @@ require '../global/functions/telegram.php';
 require '../global/functions/irm.php';
 $config = require "../config.php";
 
-$event2del = $_GET['delete'];
-if(isset($_GET['delete'])){
-	deleteCall($config->api_url . "events/" . $event2del);
-	header('Location: https://italianrockmafia.ch/meetup/index.php');
-}
-
-if(isset($_GET['signup'])){
-
-	$user = $_SESSION['irmID'];
-	$postfields = "{\n \t \"userIDFK\": \"$user\", \n \t \"eventIDFK\": \"$eventID\" \n }";
-	$result = postCall($config->api_url . "attendes", $postfields);
-	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
-}
-
-if(isset($_GET['cancel'])){
-		$list = json_decode(getCall($config->api_url . 'attendes?transform=1&filter[]=userIDFK,eq,' . $_SESSION['irmID'] . '&filter[]=eventIDFK,eq,' . $eventID . "satisfy=all"), true);
-		foreach($list['attendes'] as $user){
-			$attende2del = $user['attendeID'];
-		}
-	
-		$result = deleteCall($config->api_url . "attendes/" . $attende2del);
-		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
-	}
 
 ?>
 <!doctype html>
