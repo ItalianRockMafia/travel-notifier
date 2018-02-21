@@ -124,7 +124,7 @@ if(empty($StatusChecker['attendes'])){
 <?php echo '<a href="tgsender.php?event=' . $eventID . '&send=1" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</a>';
 
 if($creator['tgusername']  == $tg_user['username']){
-	echo '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#comingSoon">Edit Event</button>';	
+	echo '<a href="edit.php?event=' . $eventID . '" class="btn btn-success" >Edit Event</a>';	
 	echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteEvent">Delete Event</button>';
 }
 
