@@ -55,6 +55,17 @@ require 'functions/render.php';
 $tg_user = getTelegramUserData();
 saveSessionArray($tg_user);
 if ($tg_user !== false) {
+$gmapkey = $config->google['map_api_key'];
+$gmap_apiroot = "https://maps.googleapis.com/maps/api/directions/json?";
+$event = json_decode(getCall($config->api_url . "events/" . $eventID), true);
+$startdate = strtotime($event['startdate']);
+$enddate = strtotime($event['enddate']);
+
+$result = json_decode(getCall($gmap_apiroot . "origin=" . urlencode($_SESSION['station']) . "&destination=" . urlencode($event['station']) . "&key=" . $gmapkey), true);
+
+
+
+echo '<pre>'; print_r($result); echo '</pre>';
 
 
 } else {
