@@ -111,19 +111,20 @@ $StatusChecker = json_decode(getCall($url), true);
 foreach($StatusChecker['attendes'] as $attende){
 
 	if($eventID == $attende['eventIDFK'] && $_SESSION['irmID'] == $attende['userIDFK']){
-		echo '<a href="?event=' . $eventID . '&cancel=1"><button type="button" class="btn btn-success">Cancel</button></a>';
+		echo '<a href="?event=' . $eventID . '&cancel=1" class="btn btn-success">Cancel</a>';
 	}
 
 }
 if(empty($StatusChecker['attendes'])){
-	echo '<a href="?event=' . $eventID . '&signup=1"><button type="button" class="btn btn-success">Sign up</button></a>';
+	echo '<a href="?event=' . $eventID . '&signup=1" class="btn btn-success">Sign up</a>';
 } 
 
 ?>
 
-<?php echo '<a href="tgsender.php?event=' . $eventID . '&send=1"><button type="button" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</button></a>';
+<?php echo '<a href="tgsender.php?event=' . $eventID . '&send=1" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</a>';
 
 if($creator['tgusername']  == $tg_user['username']){
+	echo '<button type="button" class="btn btn-success" data-toggle="modal" data-target="#comingSoon">Edit Event</button>';	
 	echo '<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteEvent">Delete Event</button>';
 }
 
