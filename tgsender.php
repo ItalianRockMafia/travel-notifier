@@ -31,7 +31,7 @@ saveSessionArray($tg_user);
 				}
 				$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=". $config->telegram['chatID'] . "&parse_mode=HTML&disable_web_page_preview=1&text=" . urlencode($text);
 			
-				 getCall($alertURL);
+				  getCall($alertURL);
 				
 			} else {
 				$userArray = json_decode(getCall($config->api_url . "userStation?transform=1&filter=userID,eq," . $_SESSION['irmID']),true);

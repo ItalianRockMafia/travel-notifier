@@ -33,7 +33,7 @@ function renderTgConnection($response, $full, $group, $user){
 		}
 	}
 	if($group){
-		$sendText = '<a href="tg://user?id='. $user['telegramID'] . '">'. $user['tgusername'] . '</a>, your connection:' .chr(10) . 'from: ';
+		$sendText = 'All your connections to ' . $toLink . $to . '</a>'. chr(10) . chr(10) . '<a href="tg://user?id='. $user['telegramID'] . '">'. $user['tgusername'] . '</a>, your connection:' .chr(10) . 'from: ';
 		
 	} else {
 		$sendText = 'Your connection from: ';
@@ -62,7 +62,7 @@ function renderTgConnection($response, $full, $group, $user){
 	}
 }
 if($group){
-	$sendText .=  chr(10) . '<a href="https://italianrockmafia.ch/meetup/connections.php?event=' . $eventID . '">View connections on web</a>';
+	$sendText .=  '<a href="https://italianrockmafia.ch/meetup/connections.php?event=' . $eventID . '">View connections on web</a>';
 	$result = $sendText;
 }else {
 	$sendText .=  chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/connections.php?event=' . $eventID . '">View connections on web</a>';
