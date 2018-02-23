@@ -33,7 +33,7 @@ function renderTgConnection($response, $full, $group, $user){
 		}
 	}
 	if($group){
-		$sendText = 'All your connections to ' . $toLink . $to . '</a>'. chr(10) . chr(10) . '<a href="tg://user?id='. $user['telegramID'] . '">'. $user['tgusername'] . '</a>, your connection:' .chr(10) . 'from: ';
+		$sendText = chr(10) . chr(10) . '<a href="tg://user?id='. $user['telegramID'] . '">'. $user['tgusername'] . '</a>, your connection to: ' . $toLink . $to . '</a>' .chr(10) . 'from: ';
 		
 	} else {
 		$sendText = 'Your connection from: ';
@@ -74,13 +74,14 @@ if($group){
 }
 
 
-function renderTgRoute($response, $full, $group, $user){
+function renderTgRoute($response, $starttime, $full, $group, $user){
 	global $eventID, $config;
 	$route = $response->routes[0];
 	$leg = $route->legs[0];
-	$leaveTime = $startdate - $leg->duration->value - 10;
-	$sendText = '<a href="tg://user?id='. $user['telegramID'] . '">'. $user['tgusername'] . '</a>, your route to ' . $leg->end_address . chr(10);
-	$sendText .= 'Start from: ' . $leg->start_address . chr(10);
+	
+	$leaveTime = $starttime - $leg->duration->value - 10;
+	$sendText = '<a href="tg://user?id='. $user['telegramID'] . '">'. $user['tgusername'] . '</a>, your route to <a href="https://www.google.ch/maps/@' . $leg->end_address->lat . ',' . $leg->end_address->lng . '18z' . $leg->end_address . '</a>'. chr(10);
+	$sendText .= 'Start from: <a href="https://www.google.ch/maps/@' . $leg->start_address->lat . ',' . $leg->start_address->lng . '18z' . $leg->start_address . '</a>' . chr(10);
 	$sendText .=  'Distance: ' . $leg->distance->text . chr(10);
 	$sendText .=  'Duration: ' . gmdate("H:i",$leg->duration->value) . ' h' . chr(10);
 	$sendText .=  'Leave at: ' . date("l, d.m.Y H:i", $leaveTime)  . chr(10);
@@ -92,7 +93,7 @@ function renderTgRoute($response, $full, $group, $user){
 		}
 	}
 	$sendText .=  '<a href="https://italianrockmafia.ch/meetup/route.php?event=' . $eventID . '">View route on web</a>';
-	if($grpup){
+	if($group){
 		$sendText .= chr(10) . chr(10);
 		$result = $sendText;
 
