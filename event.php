@@ -99,6 +99,19 @@ $enddate = strtotime($enddate);
 	echo '<div class="topspacer"></div>';
 	echo '<p class="desc">Start: ' . date("l, d.m.Y H:i", $startdate) . ' - ' . date("d.m.Y H:i", $enddate) . '</p>';
 	echo '<p class="desc">Location / Station: ' . $event['station'] . '</p>';
+	?>
+
+<form method="post" action="add2cal.php">
+  <input type="hidden" name="date_start" value="<?php echo date("Y-m-d g:iA", $startdate); ?>">
+  <input type="hidden" name="date_end" value="<?php echo date("Y-m-d g:iA", $enddate); ?>">
+  <input type="hidden" name="location" value="<?php echo $event['station'];?>">
+  <input type="hidden" name="description" value="<?php echo $event['description'];?>">
+  <input type="hidden" name="summary" value="<?php echo $event['event_title'];?>">
+  <input type="hidden" name="url" value="<?php echo $event['url'];?>">
+  <button type="submit" class="btn btn-success" value="Add to Calendar">Add to Calendar</button>
+</form>
+
+<?php
 	
 	echo '<p>More: <a href="' . $event['url'] . '" target="_blank">' . $event['url'] . '</a></p>';
 	echo '<p>Creator: <a href="https://t.me/' . $creator['tgusername'] . '" target="_blank">' . $creator['firstname'] . ' ' . $creator['lastname'] . ' (' . $creator['tgusername'] .')</a></p>';
