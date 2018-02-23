@@ -72,3 +72,33 @@ if($group){
 	
 	return $result;
 }
+
+
+function renderTgRoute($response, $full, $group, $user){
+	global $eventID, $config;
+	$route = $response->routes[0];
+	$leg = $route->legs[0];
+	$leaveTime = $startdate - $leg->duration->value - 10;
+	$sendText = '<a href="tg://user?id='. $user['telegramID'] . '">'. $user['tgusername'] . '</a>, your route to ' . $leg->end_address . chr(10);
+	$sendText .= 'Start from: ' . $leg->start_address . chr(10);
+	$sendText .=  'Distance: ' . $leg->distance->text . chr(10);
+	$sendText .=  'Duration: ' . gmdate("H:i",$leg->duration->value) . ' h' . chr(10);
+	$sendText .=  'Leave at: ' . date("l, d.m.Y H:i", $leaveTime)  . chr(10);
+	if($full){ 
+		$sendText .= '<strong>Navigation:</strong>' . chr(10);
+		foreach($leg->steps as $step){
+			$sendText .= strip_tags($step->html_instructions, '<b>') .' ' . gmdate("i",$step->duration->value) . ' min (' . $step->distance->text . ')' .chr(10);
+		
+		}
+	}
+	$sendText .=  '<a href="https://italianrockmafia.ch/meetup/route.php?event=' . $eventID . '">View route on web</a>';
+	if($grpup){
+		$sendText .= chr(10) . chr(10);
+		$result = $sendText;
+
+	} else {
+		$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=". $_SESSION['tgID']. "&parse_mode=HTML&disable_web_page_preview=1&text=" . urlencode($sendText);
+		$result = $alertURL;
+	}
+	return $result;
+}
