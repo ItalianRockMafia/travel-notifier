@@ -74,6 +74,13 @@ echo '<p class="desc">Start from: ' . $leg['start_address'] . '</p>';
 echo '<p class="desc">Distance: ' . $leg['distance']['text'] . '</p>';
 echo '<p class="desc">Duration: ' . gmdate("H:i",$leg['duration']['value']) . ' h</p>';
 echo '<p class="desc">Leave at: ' . date("l, d.m.Y H:i", $leaveTime) . '</p>';
+/*
+ echo '<iframe
+width="600"
+height="450"
+frameborder="0" style="border:0"
+src="https://www.google.com/maps/embed/v1/directions?key=' . $gmapkey  . '&origin=' . urlencode($_SESSION['station']) . '&destination=' . urlencode($event['station']) .  'allowfullscreen>
+</iframe>';*/
 
 
 ?>
@@ -96,9 +103,9 @@ foreach($leg['steps'] as $step){
 }?>
       </div>
     </div>
-  </div>
+	</div>
+	
 <?php
-
 
 } else {
 	echo '
