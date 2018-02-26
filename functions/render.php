@@ -80,8 +80,8 @@ function renderTgRoute($response, $starttime, $full, $group, $user){
 	$leg = $route->legs[0];
 	
 	$leaveTime = $starttime - $leg->duration->value - 10;
-	$sendText = '<a href="tg://user?id='. $user['telegramID'] . '">'. $user['tgusername'] . '</a>, your route to <a href="https://www.google.ch/maps/@' . $leg->end_address->lat . ',' . $leg->end_address->lng . '18z' . $leg->end_address . '</a>'. chr(10);
-	$sendText .= 'Start from: <a href="https://www.google.ch/maps/@' . $leg->start_address->lat . ',' . $leg->start_address->lng . '18z' . $leg->start_address . '</a>' . chr(10);
+	$sendText = '<a href="tg://user?id='. $user['telegramID'] . '">'. $user['tgusername'] . '</a>, your route to <a href="https://www.google.ch/maps/@' . $leg->end_location->lat . ',' . $leg->end_location->lng . '18z">' . $leg->end_address . '</a>'. chr(10);
+	$sendText .= 'Start from: <a href="https://www.google.ch/maps/@' . $leg->start_location->lat . ',' . $leg->start_location->lng . '18z">' . $leg->start_address . '</a>' . chr(10);
 	$sendText .=  'Distance: ' . $leg->distance->text . chr(10);
 	$sendText .=  'Duration: ' . gmdate("H:i",$leg->duration->value) . ' h' . chr(10);
 	$sendText .=  'Leave at: ' . date("l, d.m.Y H:i", $leaveTime)  . chr(10);
@@ -92,9 +92,9 @@ function renderTgRoute($response, $starttime, $full, $group, $user){
 		
 		}
 	}
-	$sendText .=  '<a href="https://italianrockmafia.ch/meetup/route.php?event=' . $eventID . '">View route on web</a>';
+	$sendText .=  chr(10) . '<a href="https://italianrockmafia.ch/meetup/route.php?event=' . $eventID . '">View route on web</a>';
 	if($group){
-		$sendText .= chr(10) . chr(10);
+		$sendText .= chr(10);
 		$result = $sendText;
 
 	} else {

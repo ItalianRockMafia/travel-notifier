@@ -55,12 +55,10 @@ saveSessionArray($tg_user);
 						$text .= chr(10) .chr(10);
 				}
 
-				echo $text . '<br><br>--------------------------------------------------------<br><br>';
 
 				$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=". $config->telegram['chatID'] . "&parse_mode=HTML&disable_web_page_preview=1&text=" . urlencode($text);
-				echo $alertURL . '<br><br>';
 		
-			print_r(getCall($alertURL));
+			getCall($alertURL);
 			
 				
 			} else {
@@ -84,9 +82,9 @@ saveSessionArray($tg_user);
 					$response = json_decode(file_get_contents($url));
 					$tgUrl = renderTgRoute($response, $startimestamp, true, false, $user);
 				}
-			echo	 getCall($tgUrl);
+				 getCall($tgUrl);
 				
 			}
 		}
-		// header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&sent=1');
+		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&sent=1');
 	
