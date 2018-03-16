@@ -5,7 +5,7 @@ require '../global/functions/apicalls.php';
 require '../global/functions/telegram.php';
 require '../global/functions/irm.php';
 $config = require "../config.php";
-
+$tg_user = getTelegramUserData();
 $event2del = $_GET['delete'];
 if(isset($_GET['delete'])){
 	deleteCall($config->api_url . "events/" . $event2del);
@@ -18,8 +18,9 @@ if(isset($_GET['signup'])){
 	$postfields = "{\n \t \"userIDFK\": \"$user\", \n \t \"eventIDFK\": \"$eventID\" \n }";
 	$result = postCall($config->api_url . "attendes", $postfields);
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID), true);
-	$text = '<a href="tg://' . $_SESSION['tgID'] . '">' . $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] . ' (' . $_SESSION['tgusername'] . ') signed up for event ' . $event['event_title'] . '.';
+	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] . ' (' . $tg_user['username'] . ')</a> signed up for event <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">' . $event['event_title'] . '</a>.');
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
+	echo "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text;
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 }
 
@@ -77,7 +78,7 @@ if(isset($_GET['cancel'])){
 	<div class="container">
 
 <?php
-$tg_user = getTelegramUserData();
+
 saveSessionArray($tg_user);
 if ($tg_user !== false) {
 
