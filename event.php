@@ -17,6 +17,9 @@ if(isset($_GET['signup'])){
 	$user = $_SESSION['irmID'];
 	$postfields = "{\n \t \"userIDFK\": \"$user\", \n \t \"eventIDFK\": \"$eventID\" \n }";
 	$result = postCall($config->api_url . "attendes", $postfields);
+	$event = json_decode(getCall($config->api_url . "events/" . $eventID), true);
+	$text = '<a href="tg://' . $_SESSION['tgID'] . '">' . $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] . ' (' . $_SESSION['tgusername'] . ') signed up for event ' . $event['event_title'] . '.';
+	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 }
 
