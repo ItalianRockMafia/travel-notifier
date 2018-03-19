@@ -86,6 +86,8 @@ if ($tg_user !== false) {
 		</button>
 	</div>';
 	}
+	$mycars = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=telegramID,eq," . $tg_user['id']), true);
+
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
 	$creator = json_decode(getCall($config->api_url . "users/" . $event['userIDFK'] . "?transform=1"),true);
 
@@ -152,7 +154,9 @@ foreach($attendes['eventAttendes'] as $attende){
 echo '<li><a href="https://t.me/' . $attende["tgusername"] . '" target="_blank">' . $attende["firstname"] . ' ' . $attende["lastname"] . ' (' . $attende["tgusername"] . ')</a></li>';
 }
 echo '</ol>';
-
+?>
+<button class="btn btn-success" data-toggle="modal" data-target="#addCar">Add my car</button>
+<?php
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
@@ -162,7 +166,7 @@ echo '</ol>';
 }
 ?>
 
-<!-- Modal -->
+<!-- Modal coming soon -->
 <div class="modal fade" id="comingSoon" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -183,7 +187,7 @@ echo '</ol>';
 </div>
 
 
-<!-- Modal -->
+<!-- Modal delete event-->
 <div class="modal fade" id="deleteEvent" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -203,6 +207,37 @@ echo '</ol>';
     </div>
   </div>
 </div>
+
+
+<!-- Modal add car-->
+<div class="modal fade" id="addCar" tabindex="-1" role="dialog" aria-labelledby="addCarLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCarLabel">Add a car</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <strong>Select one of your cars</strong>
+				<div class="list-group">
+				<?php
+
+					foreach($mycars['carUsers'] as $car){
+						echo '<a href="#" data-toggle="modal" data-target="#comingSoon" data-dismiss="modal" class="list-group-item list-group-item-action">' . $car["brand"] . ' '. $car['model'] . '</a>';
+					}
+				?>
+				</div>
+      </div>
+      <div class="modal-footer">
+			<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+			
+      </div>
+    </div>
+  </div>
+</div>
+
 
 </div>
 </main>
