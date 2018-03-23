@@ -157,6 +157,14 @@ echo '<li><a href="https://t.me/' . $attende["tgusername"] . '" target="_blank">
 }
 echo '</ol>';
 
+?>
+<h2>Cars:</h2>
+
+<button class="btn btn-success" data-toggle="modal" data-target="#comingSoon">Add my car</button>
+
+
+<?php
+
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
