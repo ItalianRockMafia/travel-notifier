@@ -36,7 +36,7 @@ if(isset($_GET['add'])){
 	$endate = strtotime($endate);
 
 	if(is_numeric($eventID)){
-		$alertText = urlencode('<strong>New Event: </strong>' . $title   .chr(10). 'Start: ' . date("l, d.m.Y H:i", $startdate) . chr(10) . 'End: ' . date("d.m.Y H:i", $endate) . chr(10) . 'Where: ' . $station . chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">View on web</a>');
+		$alertText = urlencode('<strong>New Event: </strong>' . $title   .chr(10). 'Start: ' . date("l, d.m.Y H:i", $startdate) . chr(10) . 'End: ' . date("d.m.Y H:i", $endate) . chr(10) . 'Where: ' . $station . chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">View on web</a>' .chr£(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&signup=1">I\'m coming, sign me up!</a>');
 	
 		$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;
 		
