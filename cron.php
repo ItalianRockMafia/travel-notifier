@@ -1,9 +1,9 @@
 <?php
 
 $date = new DateTime();
-require '../global/functions/apicalls.php';
-require '../global/functions/telegram.php';
-$config = require "../config.php";
+require 'www/italianrockmafia.ch/global/functions/apicalls.php';
+require 'www/italianrockmafia.ch/global/functions/telegram.php';
+$config = require "www/italianrockmafia.ch/config.php";
 
 $events = json_decode(getCall($config->api_url . "eventUsers?transform=1"), true);
 
