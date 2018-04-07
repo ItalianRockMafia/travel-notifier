@@ -204,7 +204,7 @@ foreach($eventCars["eventCarUsers"] as $carBin){
 		//Get list of passengers
 		$passengers = json_decode(getCall($config->api_url . "eventCarUsers?transform=1&filter[]=carIDFK,eq," . $carBin['carIDFK'] . "&filter[]=eventIDFK,eq," . $eventID . "satisfy=all"), true);
 		//calculate free space
-		$noOfPassangers = count($passengers);
+		$noOfPassangers = count($passengers['eventCarUsers']);
 		$freeSpace = $car['places'] - $noOfPassangers;
 		//check owner
 		if($_SESSION['tgID'] === $car['telegramID']){
