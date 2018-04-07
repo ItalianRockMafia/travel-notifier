@@ -34,6 +34,16 @@ if(isset($_GET['cancel'])){
 		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 	}
 
+if(isset($_GET['addcar'])){
+	$car2add = $_GET['addcar'];
+	$driver = $_SESSION['irmID'];
+	$postfields = "{\n \t \"userIDFK\": \"$driver\", \n \t \"eventIDFK\": \"$eventID\", \n \t \"carIDFK\": \"$car2add\" \n }";
+	$result = postCAll($config->api_url . "eventCarUsers", $postfields);
+	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+
+
+}
+
 ?>
 <!doctype html>
 <html>
@@ -230,7 +240,7 @@ echo '</ol>';
 				<?php
 
 					foreach($mycars['carUsers'] as $car){
-						echo '<a href="#" data-toggle="modal" data-target="#comingSoon" data-dismiss="modal" class="list-group-item list-group-item-action">' . $car["brand"] . ' '. $car['model'] . '</a>';
+						echo '<a href="?addcar=' .  $car['carID'] . '&event=' . $eventID .'" class="list-group-item list-group-item-action">' . $car["brand"] . ' '. $car['model'] . '</a>';
 					}
 				?>
 				</div>
