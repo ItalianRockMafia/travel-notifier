@@ -39,9 +39,11 @@ if(isset($_GET['addcar'])){
 	$driver = $_SESSION['irmID'];
 	$postfields = "{\n \t \"userIDFK\": \"$driver\", \n \t \"eventIDFK\": \"$eventID\", \n \t \"carIDFK\": \"$car2add\" \n }";
 	$result = postCAll($config->api_url . "eventCarUsers", $postfields);
-	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
-
-
+	if(is_numeric($result)){
+		header('Location: https://italianrockmafia.ch/meetup/event.php?caradd=success&event=' . $eventID);
+	} else {
+		header('Location: https://italianrockmafia.ch/meetup/event.php?caradd=fail&event=' . $eventID);
+	}
 }
 
 ?>
@@ -100,6 +102,24 @@ if ($tg_user !== false) {
 		</button>
 	</div>';
 	}
+	if ($_GET['caradd'] == "success"){
+		echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<strong>Success!</strong> Your car has been added.
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>';
+	}
+
+	if ($_GET['caradd'] == "fail"){
+		echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+		<strong>Error!</strong> There was an error adding you car. Are you already signed up with another car on this event?
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>';
+	}
+
 	$mycars = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=telegramID,eq," . $tg_user['id']), true);
 
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
@@ -172,6 +192,52 @@ echo '</ol>';
 <h2>Cars</h2>
 <button class="btn btn-success" data-toggle="modal" data-target="#addCar">Add my car</button>
 <?php
+$eventCars = json_decode(getCall($config->api_url . "eventCarUsers?filter=eventIDFK,eq," . $eventID . "&transform=1"), true);
+echo '<div id="accordion">';
+
+$carsprinted = array();
+foreach($eventCars["eventCarUsers"] as $carBin){
+	if(!in_array($carBin['carIDFK'], $carsprinted)){
+		$cardetails = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=carID,eq," . $carBin['carIDFK'] ), true);
+		$car = $cardetails['carUsers'][0];
+		$passengers = json_decode(getCall($config->api_url . "eventCarUsers?transform=1&filter[]=carIDFK,eq," . $carBin['carIDFK'] . "&filter[]=eventIDFK,eq," . $eventID . "satisfy=all"), true);
+		$noOfPassangers = count($passengers);
+		$freeSpace = $car['places'] - $noOfPassangers;
+		echo '<div class="card">
+    <div class="card-header" id="heading-'. $carBin['carIDFK'].'">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#members-'. $carBin['carIDFK'].'" aria-expanded="false" aria-controls="members-'. $car['carIDFK'].'">
+				' . $car['brand'] . ' ' . $car['model'] . ' (' . $car['color'] . ') ' . 'Owner: ' . $car['tgusername'];
+				if($freeSpace > 0){
+					echo ' <span class="badge badge-success badge-pill">'.$freeSpace.'</span>';
+				} else {
+					echo ' <span class="badge badge-danger badge-pill">full</span>';
+				} 
+				
+				echo '</button>
+      </h5>
+    </div>
+
+    <div id="members-'. $carBin['carIDFK'].'" class="collapse" aria-labelledby="heading-'. $carBin['carIDFK'].'" data-parent="#accordion">
+			<div class="card-body"><ul>';
+			foreach($passengers['eventCarUsers'] as $passenger){
+				$details = json_decode(getCall($config->api_url. "users/". $passenger['userIDFK'] . "?transform=1"), true);
+				echo '<li>' . $details['tgusername'] . '</li>';
+
+			}
+      echo '</ul></div>
+    </div>
+	</div>
+';
+$carsprinted[] = $carBin['carIDFK'];
+	}
+}
+echo '</div>';
+
+
+  
+
+
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
