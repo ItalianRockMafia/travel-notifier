@@ -198,20 +198,28 @@ echo '<div id="accordion">';
 $carsprinted = array();
 foreach($eventCars["eventCarUsers"] as $carBin){
 	if(!in_array($carBin['carIDFK'], $carsprinted)){
+		//Get details of car
 		$cardetails = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=carID,eq," . $carBin['carIDFK'] ), true);
 		$car = $cardetails['carUsers'][0];
+		//Get list of passengers
 		$passengers = json_decode(getCall($config->api_url . "eventCarUsers?transform=1&filter[]=carIDFK,eq," . $carBin['carIDFK'] . "&filter[]=eventIDFK,eq," . $eventID . "satisfy=all"), true);
+		//calculate free space
 		$noOfPassangers = count($passengers);
 		$freeSpace = $car['places'] - $noOfPassangers;
+		//check owner
+		if($_SESSION['tgID'] === $car['telegramID']){
+			$owner = true;
+		} 
+		//echo list
 		echo '<div class="card">
     <div class="card-header" id="heading-'. $carBin['carIDFK'].'">
       <h5 class="mb-0">
         <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#members-'. $carBin['carIDFK'].'" aria-expanded="false" aria-controls="members-'. $car['carIDFK'].'">
 				' . $car['brand'] . ' ' . $car['model'] . ' (' . $car['color'] . ') ' . 'Owner: ' . $car['tgusername'];
 				if($freeSpace > 0){
-					echo ' <span class="badge badge-success badge-pill">'.$freeSpace.'</span>';
+					echo ' <span class="badge badge-success badge-pill">'.$freeSpace.'</span> ';
 				} else {
-					echo ' <span class="badge badge-danger badge-pill">full</span>';
+					echo ' <span class="badge badge-danger badge-pill">full</span> ';
 				} 
 				
 				echo '</button>
@@ -225,7 +233,11 @@ foreach($eventCars["eventCarUsers"] as $carBin){
 				echo '<li>' . $details['tgusername'] . '</li>';
 
 			}
-      echo '</ul></div>
+			echo '</ul>';
+			if($owner){
+				echo ' <a href="?event=' . $eventID . '&deleteCar='. $car['carID'] . '" class="btn btn-danger">Remove car from event</a>';
+			}
+			echo '</div>
     </div>
 	</div>
 ';
