@@ -45,6 +45,17 @@ if(isset($_GET['addcar'])){
 		header('Location: https://italianrockmafia.ch/meetup/event.php?caradd=fail&event=' . $eventID);
 	}
 }
+if(isset($_GET['deleteCar'])){
+	$car2del = $_GET['deleteCar'];
+	$records = json_decode(getCall($config->api_url . "eventCarUsers?transform=1&filter[]=eventIDFK,eq," . $eventID . "&filter[]=carIDFK,eq," . $car2del),true);
+	$recIDs = array();
+	$ids = "";
+	foreach($records['eventCarUsers'] as $record){
+		//$recIDs[] = $record['comboID'];
+		$ids .= $record['comboID'] . ",";
+	}
+	
+}
 
 ?>
 <!doctype html>
