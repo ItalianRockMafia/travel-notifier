@@ -281,7 +281,7 @@ foreach($eventCars["eventCarUsers"] as $carBin){
 				' <a href="?event=' . $eventID . '&addPassenger='. $_SESSION['irmID'] . '" class="btn btn-success">Add me to this car</a>';
 			}
 			if(!in_array($_SESSION['irmID'], $carBin)){
-				echo ' <a href="?event=' . $eventID . '&add2car='. $car['carID'] . '" class="btn btn-success">Add me to this car</a>';
+				echo ' <a href="?event=' . $eventID . '&add2car='. $car['carID'] . '" class="btn btn-success ';if($freeSpace < 1){ echo 'disabled';} echo'">Add me to this car</a>';
 				
 			}
 
