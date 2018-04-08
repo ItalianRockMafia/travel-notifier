@@ -59,6 +59,15 @@ if(isset($_GET['deleteCar'])){
 
 }
 
+if(isset($_GET['add2car'])){
+	$car2add = $_GET['add2car'];
+	$passenger = $_SESSION['irmID'];
+	$postfields = "{\n \t \"userIDFK\": \"$passenger\", \n \t \"eventIDFK\": \"$eventID\", \n \t \"carIDFK\": \"$car2add\" \n }";
+	$result = postCall($config->api_url . "eventCarUsers", $postfields);
+	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+	
+}
+
 if(isset($_GET['delpassenger'])){
 	$leaver = $_GET['delpassenger'];
 	$car2free = $_GET['car'];
@@ -261,13 +270,20 @@ foreach($eventCars["eventCarUsers"] as $carBin){
 				if($tg_user['username'] != $details['tgusername'] && $owner){
 					echo ' <a href="?delpassenger=' . $passenger['userIDFK'] . '&car='. $passenger['carIDFK'] .  '&event=' . $eventID . '"><i class="fa fa-trash"></i></a>';
 				}
+				
 				echo '</li>';
 			}
 			echo '</ul>';
 			if($owner){
 				echo ' <a href="?event=' . $eventID . '&deleteCar='. $car['carID'] . '" class="btn btn-danger">Remove car from event</a>';
 			}
-			
+			if(!$passengerCheck){
+				' <a href="?event=' . $eventID . '&addPassenger='. $_SESSION['irmID'] . '" class="btn btn-success">Add me to this car</a>';
+			}
+			if(!in_array($_SESSION['irmID'], $carBin)){
+				echo ' <a href="?event=' . $eventID . '&add2car='. $car['carID'] . '" class="btn btn-success">Add me to this car</a>';
+				
+			}
 
 			echo '</div>
     </div>
