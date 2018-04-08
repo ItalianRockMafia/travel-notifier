@@ -49,12 +49,14 @@ if(isset($_GET['deleteCar'])){
 	$car2del = $_GET['deleteCar'];
 	$records = json_decode(getCall($config->api_url . "eventCarUsers?transform=1&filter[]=eventIDFK,eq," . $eventID . "&filter[]=carIDFK,eq," . $car2del),true);
 	$recIDs = array();
-	$ids = "";
 	foreach($records['eventCarUsers'] as $record){
-		//$recIDs[] = $record['comboID'];
-		$ids .= $record['comboID'] . ",";
+		$recIDs[] = $record['comboID'];
 	}
-	
+	foreach($recIDs as $id){
+		$result = deleteCall($config->api_url . "eventCarUsers/" . $id);
+		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+	}
+
 }
 
 ?>
