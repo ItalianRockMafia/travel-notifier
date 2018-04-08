@@ -59,6 +59,17 @@ if(isset($_GET['deleteCar'])){
 
 }
 
+if(isset($_GET['delpassenger'])){
+	$leaver = $_GET['delpassenger'];
+	$car2free = $_GET['car'];
+	$records = json_decode(getCall($config->api_url . "eventCarUsers?transform=1&filter[]=userIDFK,eq," . $leaver . "&filter[]=carIDFK,eq," . $car2free . "&filter[]=eventIDFK,eq," . $eventID . "&satisfy=all"),true);
+	foreach($records['eventCarUsers'] as $record){
+		$id2kill = $record['comboID'];
+	}
+	$result = deleteCall($config->api_url . "eventCarUsers/" . $id2kill);
+	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+}
+
 ?>
 <!doctype html>
 <html>
@@ -243,13 +254,21 @@ foreach($eventCars["eventCarUsers"] as $carBin){
 			<div class="card-body"><ul>';
 			foreach($passengers['eventCarUsers'] as $passenger){
 				$details = json_decode(getCall($config->api_url. "users/". $passenger['userIDFK'] . "?transform=1"), true);
-				echo '<li>' . $details['tgusername'] . '</li>';
-
+				echo '<li>' . $details['tgusername'];
+				if($tg_user['username'] == $details['tgusername'] && !$owner){
+					echo ' <a href="?delpassenger=' . $passenger['userIDFK']  . '&car='. $passenger['carIDFK'] .  '&event=' . $eventID . '"><i class="fa fa-times"></i></a>';
+				} 
+				if($tg_user['username'] != $details['tgusername'] && $owner){
+					echo ' <a href="?delpassenger=' . $passenger['userIDFK'] . '&car='. $passenger['carIDFK'] .  '&event=' . $eventID . '"><i class="fa fa-trash"></i></a>';
+				}
+				echo '</li>';
 			}
 			echo '</ul>';
 			if($owner){
 				echo ' <a href="?event=' . $eventID . '&deleteCar='. $car['carID'] . '" class="btn btn-danger">Remove car from event</a>';
 			}
+			
+
 			echo '</div>
     </div>
 	</div>
