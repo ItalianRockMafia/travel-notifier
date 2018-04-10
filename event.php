@@ -86,6 +86,10 @@ if(isset($_GET['delpassenger'])){
 		$id2kill = $record['comboID'];
 	}
 	$result = deleteCall($config->api_url . "eventCarUsers/" . $id2kill);
+	$user = json_decode(getCall($config->api_url . "users/" . $leaver . "?transform=1"), true);
+	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
+	$text = urlencode('Hi <a href="tg://user?id=' . $user['telegramID'] . '">'. $user['tgusername'] . '</a>'.  chr(10) . 'You have been removed from a car driving to <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">' . $event['event_title'] . '</a>');
+	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $user['telegramID'] . "&parse_mode=HTML&text=" . $text);	
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 }
 
