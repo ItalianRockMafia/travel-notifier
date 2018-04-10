@@ -6,6 +6,7 @@ require '../global/functions/telegram.php';
 require '../global/functions/irm.php';
 $config = require "../config.php";
 $tg_user = getTelegramUserData();
+saveSessionArray($tg_user);
 $event2del = $_GET['delete'];
 if(isset($_GET['delete'])){
 	deleteCall($config->api_url . "events/" . $event2del);
@@ -20,7 +21,6 @@ if(isset($_GET['signup'])){
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID), true);
 	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] . ' (' . $tg_user['username'] . ')</a> signed up for event <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">' . $event['event_title'] . '</a>.');
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
-	echo "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text;
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 }
 
@@ -64,6 +64,16 @@ if(isset($_GET['add2car'])){
 	$passenger = $_SESSION['irmID'];
 	$postfields = "{\n \t \"userIDFK\": \"$passenger\", \n \t \"eventIDFK\": \"$eventID\", \n \t \"carIDFK\": \"$car2add\" \n }";
 	$result = postCall($config->api_url . "eventCarUsers", $postfields);
+	$ownerarr = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=carID,eq," . $car2add) , true);
+	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
+	foreach($ownerarr['carUsers'] as $owner){
+		$tgID = $owner['telegramID'];
+		$tgName = $owner['tgusername'];
+	}
+	$text = urlencode("Hi, " . $tgName . chr(10) . '<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> signed up to drive with you to ' . $event['event_title'] . "." .
+					chr(10) . 'If it\'s ok, ignore this message. Else, you can <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&delpassenger=' . $passenger . 'car=' . $car2add . '">remove the person from your car</a>.');
+	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $tgID . "&parse_mode=HTML&text=" . $text);
+
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 	
 }
