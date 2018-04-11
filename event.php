@@ -41,7 +41,9 @@ if(isset($_GET['addcar'])){
 	$result = postCall($config->api_url . "eventCarUsers", $postfields);
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);	
 	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> added a car to ' . $event['event_title'] . chr(10) . 
-							'If you want to join as a passenger, <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&car=' . $car2add . '">click here</a>.');
+							'If you want to join as a passenger, <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&add2car=' . $car2add . '">click here</a>.');
+	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
+							
 	if(is_numeric($result)){
 		header('Location: https://italianrockmafia.ch/meetup/event.php?caradd=success&event=' . $eventID);
 	} else {
@@ -58,13 +60,13 @@ if(isset($_GET['deleteCar'])){
 	foreach($recIDs as $id){
 		$result = deleteCall($config->api_url . "eventCarUsers/" . $id);
 	}
-	$ownerarr = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=carID,eq," . $car2add) , true);
+	//$ownerarr = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=carID,eq," . $car2add) , true);
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
-	foreach($ownerarr['carUsers'] as $owner){
+	/*foreach($ownerarr['carUsers'] as $owner){
 		$tgID = $owner['telegramID'];
 		$tgName = $owner['tgusername'];
-	}
-	$text = urlencode('<a href="tg://user?id=' . $tgID . '">' . $tgName . '</a> removed his car from the event "' . $event['event_title'] . '".');
+	}*/
+	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> removed his car from the event "' . $event['event_title'] . '".');
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 	
