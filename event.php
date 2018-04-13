@@ -60,12 +60,8 @@ if(isset($_GET['deleteCar'])){
 	foreach($recIDs as $id){
 		$result = deleteCall($config->api_url . "eventCarUsers/" . $id);
 	}
-	//$ownerarr = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=carID,eq," . $car2add) , true);
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
-	/*foreach($ownerarr['carUsers'] as $owner){
-		$tgID = $owner['telegramID'];
-		$tgName = $owner['tgusername'];
-	}*/
+
 	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> removed his car from the event "' . $event['event_title'] . '".');
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
