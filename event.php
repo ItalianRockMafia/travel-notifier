@@ -133,6 +133,9 @@ if(isset($_GET['delpassenger'])){
 			  <li class="nav-item active">
 				<a class="nav-link" href="index.php">Events<span class="sr-only">(current)</span></a>
 			  </li>
+				<li class="nav-item">
+				<a class="nav-link" href="../emp">EMP</a>
+			  </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="nav-item">
