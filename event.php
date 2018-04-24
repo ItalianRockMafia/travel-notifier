@@ -118,7 +118,7 @@ if(isset($_GET['addcomment'])){
 		$eventPost = "{\n \t \"eventIDFK\": \"$eventID\", \n \t \"commentIDFK\": \"$newComID\" \n }";
 		postCall($config->api_url . "eventComments", $eventPost);
 		$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);		
-		$alertText = urlencode( "@" . $tg_user['username'] . ' made a new comment on event <a href="' . $config->app_url . "meetup/event.php.php?event=" . $eventID . '">'. $event['event_title'] . '</a>:' . chr(10) . $comment);
+		$alertText = urlencode( "@" . $tg_user['username'] . ' made a new comment on event <a href="' . $config->app_url . "meetup/event.php?event=" . $eventID . '">'. $event['event_title'] . '</a>:' . chr(10) . $comment);
 		$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;		
 		getCall($alertURL);
 	}
