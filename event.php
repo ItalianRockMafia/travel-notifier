@@ -14,7 +14,7 @@ if(isset($_GET['delete'])){
 }
 
 if(isset($_GET['signup'])){
-
+	if ($tg_user !== false) {
 	$user = $_SESSION['irmID'];
 	$postfields = "{\n \t \"userIDFK\": \"$user\", \n \t \"eventIDFK\": \"$eventID\" \n }";
 	$result = postCall($config->api_url . "attendes", $postfields);
@@ -22,6 +22,13 @@ if(isset($_GET['signup'])){
 	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] . ' (' . $tg_user['username'] . ')</a> signed up for event <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">' . $event['event_title'] . '</a>.');
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+} else {
+	echo '
+	<div class="alert alert-danger" role="alert">
+	<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/login.php">login</a> first.
+  </div>
+';
+}
 }
 
 if(isset($_GET['cancel'])){
@@ -101,6 +108,23 @@ if(isset($_GET['delpassenger'])){
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $user['telegramID'] . "&parse_mode=HTML&text=" . $text);	
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 }
+
+if(isset($_GET['addcomment'])){
+	$comment = $_POST['Newcomment'];
+	$irmID = $_SESSION['irmID'];
+	$commentPost = "{\n \t \"comment\": \"$comment\", \n \t \"authorIDFK\": \"$irmID\" \n }";
+	$newComID = postCall($config->api_url . "comments", $commentPost);
+	if(is_numeric($newComID)){
+		$eventPost = "{\n \t \"eventIDFK\": \"$eventID\", \n \t \"commentIDFK\": \"$newComID\" \n }";
+		postCall($config->api_url . "eventComments", $eventPost);
+		$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);		
+		$alertText = urlencode( "@" . $tg_user['username'] . ' made a new comment on event <a href="' . $config->app_url . "meetup/event.php.php?event=" . $eventID . '">'. $event['event_title'] . '</a>:' . chr(10) . $comment);
+		$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;		
+		getCall($alertURL);
+	}
+	header('Location: ' . $config->app_url . 'meetup/event.php?event=' . $eventID);
+}
+
 
 ?>
 <!doctype html>
@@ -320,9 +344,44 @@ $carsprinted[] = $carBin['carIDFK'];
 }
 echo '</div>';
 
+echo '<h2>Comments</h2>';
+$eventCommentsID = json_decode(getCall($config->api_url . "eventComments?transform=1&filter=eventIDFK,eq," . $eventID), true);
+foreach($eventCommentsID['eventComments'] as $commentIDs){
+	$commRecs[] = $commentIDs['commentIDFK'];
+}
+if(!empty($commRecs)){
+	$qrystr = "";
+	foreach($commRecs as $commID){
+		$qrystr .= $commID . ",";
+	}
+	$qrystr = rtrim($qrystr,",");
+	$comments = json_decode(getCall($config->api_url . "comments/" . $qrystr . "?transform=1&order=commentID,asc"), true);
+	if (!isset($comments[0])) $comments=[$comments];
+		foreach($comments as $comment){
+			$author = json_decode(getCall($config->api_url . "users/" . $comment['authorIDFK'] . "?transform=1"), true);
+			echo '<div class="card">
+				<div class="card-body">
+	 			'. $comment['comment'] .'
+	 			<footer class="blockquote-footer">'. $author['tgusername'].'</footer>			 
+				</div>
+				</div>';
+		}
+	} else {
+			echo '<div class="alert alert-warning" role="alert">
+				No comments.
+				</div>';
+	}
+?> <h3>New comment</h3>
+<form action="?addcomment=1&event=<?php echo $eventID;?>" method="POST">
+	<div class="form-group">
+			<label for="Newcomment">Your comment</label>
+			<textarea class="form-control" id="Newcomment" name="Newcomment" rows="3"></textarea>
+		</div>
+		<button type="submit" class="btn btn-success">Submit</button>
 
+</form>
   
-
+<?php
 
 } else {
 	echo '
