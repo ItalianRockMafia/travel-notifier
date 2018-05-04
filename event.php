@@ -13,7 +13,7 @@ if(isset($_GET['delete'])){
 }
 
 if(isset($_GET['signup'])){
-
+	if ($tg_user !== false) {
 	$user = $_SESSION['irmID'];
 	$postfields = "{\n \t \"userIDFK\": \"$user\", \n \t \"eventIDFK\": \"$eventID\" \n }";
 	$result = postCall($config->api_url . "attendes", $postfields);
@@ -22,6 +22,13 @@ if(isset($_GET['signup'])){
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
 	echo "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text;
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+	} else {
+		echo '
+	<div class="alert alert-danger" role="alert">
+	<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/login.php">login</a> first.
+  </div>
+';
+	}
 }
 
 if(isset($_GET['cancel'])){
