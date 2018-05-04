@@ -6,6 +6,7 @@ require '../global/functions/telegram.php';
 require '../global/functions/irm.php';
 $config = require "../config.php";
 $tg_user = getTelegramUserData();
+saveSessionArray($tg_user);
 $event2del = $_GET['delete'];
 if(isset($_GET['delete'])){
 	deleteCall($config->api_url . "events/" . $event2del);
@@ -20,7 +21,6 @@ if(isset($_GET['signup'])){
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID), true);
 	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] . ' (' . $tg_user['username'] . ')</a> signed up for event <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">' . $event['event_title'] . '</a>.');
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
-	echo "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text;
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 	} else {
 		echo '
@@ -40,6 +40,91 @@ if(isset($_GET['cancel'])){
 		$result = deleteCall($config->api_url . "attendes/" . $attende2del);
 		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 	}
+
+if(isset($_GET['addcar'])){
+	$car2add = $_GET['addcar'];
+	$driver = $_SESSION['irmID'];
+	$postfields = "{\n \t \"userIDFK\": \"$driver\", \n \t \"eventIDFK\": \"$eventID\", \n \t \"carIDFK\": \"$car2add\" \n }";
+	$result = postCall($config->api_url . "eventCarUsers", $postfields);
+	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);	
+	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> added a car to ' . $event['event_title'] . chr(10) . 
+							'If you want to join as a passenger, <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&add2car=' . $car2add . '">click here</a>.');
+	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
+							
+	if(is_numeric($result)){
+		header('Location: https://italianrockmafia.ch/meetup/event.php?caradd=success&event=' . $eventID);
+	} else {
+		header('Location: https://italianrockmafia.ch/meetup/event.php?caradd=fail&event=' . $eventID);
+	}
+}
+if(isset($_GET['deleteCar'])){
+	$car2del = $_GET['deleteCar'];
+	$records = json_decode(getCall($config->api_url . "eventCarUsers?transform=1&filter[]=eventIDFK,eq," . $eventID . "&filter[]=carIDFK,eq," . $car2del),true);
+	$recIDs = array();
+	foreach($records['eventCarUsers'] as $record){
+		$recIDs[] = $record['comboID'];
+	}
+	foreach($recIDs as $id){
+		$result = deleteCall($config->api_url . "eventCarUsers/" . $id);
+	}
+	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
+
+	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> removed his car from the event "' . $event['event_title'] . '".');
+	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
+	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+	
+}
+
+if(isset($_GET['add2car'])){
+	$car2add = $_GET['add2car'];
+	$passenger = $_SESSION['irmID'];
+	$postfields = "{\n \t \"userIDFK\": \"$passenger\", \n \t \"eventIDFK\": \"$eventID\", \n \t \"carIDFK\": \"$car2add\" \n }";
+	$result = postCall($config->api_url . "eventCarUsers", $postfields);
+	$ownerarr = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=carID,eq," . $car2add) , true);
+	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
+	foreach($ownerarr['carUsers'] as $owner){
+		$tgID = $owner['telegramID'];
+		$tgName = $owner['tgusername'];
+	}
+	$text = urlencode("Hi, " . $tgName . chr(10) . '<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> signed up to drive with you to ' . $event['event_title'] . "." .
+					chr(10) . 'If it\'s ok, ignore this message. Else, you can <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&delpassenger=' . $passenger . 'car=' . $car2add . '">remove the person from your car</a>.');
+	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $tgID . "&parse_mode=HTML&text=" . $text);
+
+	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+	
+}
+
+if(isset($_GET['delpassenger'])){
+	$leaver = $_GET['delpassenger'];
+	$car2free = $_GET['car'];
+	$records = json_decode(getCall($config->api_url . "eventCarUsers?transform=1&filter[]=userIDFK,eq," . $leaver . "&filter[]=carIDFK,eq," . $car2free . "&filter[]=eventIDFK,eq," . $eventID . "&satisfy=all"),true);
+	foreach($records['eventCarUsers'] as $record){
+		$id2kill = $record['comboID'];
+	}
+	$result = deleteCall($config->api_url . "eventCarUsers/" . $id2kill);
+	$user = json_decode(getCall($config->api_url . "users/" . $leaver . "?transform=1"), true);
+	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
+	$text = urlencode('Hi <a href="tg://user?id=' . $user['telegramID'] . '">'. $user['tgusername'] . '</a>'.  chr(10) . 'You have been removed from a car driving to <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">' . $event['event_title'] . '</a>');
+	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $user['telegramID'] . "&parse_mode=HTML&text=" . $text);	
+	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+}
+
+if(isset($_GET['addcomment'])){
+	$comment = $_POST['Newcomment'];
+	$irmID = $_SESSION['irmID'];
+	$commentPost = "{\n \t \"comment\": \"$comment\", \n \t \"authorIDFK\": \"$irmID\" \n }";
+	$newComID = postCall($config->api_url . "comments", $commentPost);
+	if(is_numeric($newComID)){
+		$eventPost = "{\n \t \"eventIDFK\": \"$eventID\", \n \t \"commentIDFK\": \"$newComID\" \n }";
+		postCall($config->api_url . "eventComments", $eventPost);
+		$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);		
+		$alertText = urlencode( "@" . $tg_user['username'] . ' made a new comment on event <a href="' . $config->app_url . "meetup/event.php.php?event=" . $eventID . '">'. $event['event_title'] . '</a>:' . chr(10) . $comment);
+		$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;		
+		getCall($alertURL);
+	}
+	header('Location: ' . $config->app_url . 'meetup/event.php?event=' . $eventID);
+}
+
 
 ?>
 <!doctype html>
@@ -72,6 +157,9 @@ if(isset($_GET['cancel'])){
 			  <li class="nav-item active">
 				<a class="nav-link" href="index.php">Events<span class="sr-only">(current)</span></a>
 			  </li>
+				<li class="nav-item">
+				<a class="nav-link" href="../emp">EMP</a>
+			  </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="nav-item">
@@ -97,6 +185,24 @@ if ($tg_user !== false) {
 		</button>
 	</div>';
 	}
+	if ($_GET['caradd'] == "success"){
+		echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<strong>Success!</strong> Your car has been added.
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>';
+	}
+
+	if ($_GET['caradd'] == "fail"){
+		echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+		<strong>Error!</strong> There was an error adding you car. Are you already signed up with another car on this event?
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>';
+	}
+
 	$mycars = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=telegramID,eq," . $tg_user['id']), true);
 
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);
@@ -169,6 +275,114 @@ echo '</ol>';
 <h2>Cars</h2>
 <button class="btn btn-success" data-toggle="modal" data-target="#addCar">Add my car</button>
 <?php
+$eventCars = json_decode(getCall($config->api_url . "eventCarUsers?filter=eventIDFK,eq," . $eventID . "&transform=1"), true);
+echo '<div id="accordion">';
+
+$carsprinted = array();
+foreach($eventCars["eventCarUsers"] as $carBin){
+	if(!in_array($carBin['carIDFK'], $carsprinted)){
+		//Get details of car
+		$cardetails = json_decode(getCall($config->api_url . "carUsers?transform=1&filter=carID,eq," . $carBin['carIDFK'] ), true);
+		$car = $cardetails['carUsers'][0];
+		//Get list of passengers
+		$passengers = json_decode(getCall($config->api_url . "eventCarUsers?transform=1&filter[]=carIDFK,eq," . $carBin['carIDFK'] . "&filter[]=eventIDFK,eq," . $eventID . "satisfy=all"), true);
+		//calculate free space
+		$noOfPassangers = count($passengers['eventCarUsers']);
+		$freeSpace = $car['places'] - $noOfPassangers;
+		//check owner
+		if($_SESSION['tgID'] === $car['telegramID']){
+			$owner = true;
+		} 
+		//echo list
+		echo '<div class="card">
+    <div class="card-header" id="heading-'. $carBin['carIDFK'].'">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#members-'. $carBin['carIDFK'].'" aria-expanded="false" aria-controls="members-'. $car['carIDFK'].'">
+				' . $car['brand'] . ' ' . $car['model'] . ' (' . $car['color'] . ') ' . 'Owner: ' . $car['tgusername'];
+				if($freeSpace > 0){
+					echo ' <span class="badge badge-success badge-pill">'.$freeSpace.'</span> ';
+				} else {
+					echo ' <span class="badge badge-danger badge-pill">full</span> ';
+				} 
+				
+				echo '</button>
+      </h5>
+    </div>
+
+    <div id="members-'. $carBin['carIDFK'].'" class="collapse" aria-labelledby="heading-'. $carBin['carIDFK'].'" data-parent="#accordion">
+			<div class="card-body"><ul>';
+			foreach($passengers['eventCarUsers'] as $passenger){
+				$details = json_decode(getCall($config->api_url. "users/". $passenger['userIDFK'] . "?transform=1"), true);
+				echo '<li>' . $details['tgusername'];
+				if($tg_user['username'] == $details['tgusername'] && !$owner){
+					echo ' <a href="?delpassenger=' . $passenger['userIDFK']  . '&car='. $passenger['carIDFK'] .  '&event=' . $eventID . '"><i class="fa fa-times"></i></a>';
+				} 
+				if($tg_user['username'] != $details['tgusername'] && $owner){
+					echo ' <a href="?delpassenger=' . $passenger['userIDFK'] . '&car='. $passenger['carIDFK'] .  '&event=' . $eventID . '"><i class="fa fa-trash"></i></a>';
+				}
+				
+				echo '</li>';
+			}
+			echo '</ul>';
+			if($owner){
+				echo ' <a href="?event=' . $eventID . '&deleteCar='. $car['carID'] . '" class="btn btn-danger">Remove car from event</a>';
+			}
+			if(!$passengerCheck){
+				' <a href="?event=' . $eventID . '&addPassenger='. $_SESSION['irmID'] . '" class="btn btn-success">Add me to this car</a>';
+			}
+			if(!in_array($_SESSION['irmID'], $carBin)){
+				echo ' <a href="?event=' . $eventID . '&add2car='. $car['carID'] . '" class="btn btn-success ';if($freeSpace < 1){ echo 'disabled';} echo'">Add me to this car</a>';
+				
+			}
+
+			echo '</div>
+    </div>
+	</div>
+';
+$carsprinted[] = $carBin['carIDFK'];
+	}
+}
+echo '</div>';
+
+echo '<h2>Comments</h2>';
+$eventCommentsID = json_decode(getCall($config->api_url . "eventComments?transform=1&filter=eventIDFK,eq," . $eventID), true);
+foreach($eventCommentsID['eventComments'] as $commentIDs){
+	$commRecs[] = $commentIDs['commentIDFK'];
+}
+if(!empty($commRecs)){
+	$qrystr = "";
+	foreach($commRecs as $commID){
+		$qrystr .= $commID . ",";
+	}
+	$qrystr = rtrim($qrystr,",");
+	$comments = json_decode(getCall($config->api_url . "comments/" . $qrystr . "?transform=1&order=commentID,asc"), true);
+	if (!isset($comments[0])) $comments=[$comments];
+		foreach($comments as $comment){
+			$author = json_decode(getCall($config->api_url . "users/" . $comment['authorIDFK'] . "?transform=1"), true);
+			echo '<div class="card">
+				<div class="card-body">
+	 			'. $comment['comment'] .'
+	 			<footer class="blockquote-footer">'. $author['tgusername'].'</footer>			 
+				</div>
+				</div>';
+		}
+	} else {
+			echo '<div class="alert alert-warning" role="alert">
+				No comments.
+				</div>';
+	}
+?> <h3>New comment</h3>
+<form action="?addcomment=1&event=<?php echo $eventID;?>" method="POST">
+	<div class="form-group">
+			<label for="Newcomment">Your comment</label>
+			<textarea class="form-control" id="Newcomment" name="Newcomment" rows="3"></textarea>
+		</div>
+		<button type="submit" class="btn btn-success">Submit</button>
+
+</form>
+  
+<?php
+
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
@@ -237,7 +451,7 @@ echo '</ol>';
 				<?php
 
 					foreach($mycars['carUsers'] as $car){
-						echo '<a href="#" data-toggle="modal" data-target="#comingSoon" data-dismiss="modal" class="list-group-item list-group-item-action">' . $car["brand"] . ' '. $car['model'] . '</a>';
+						echo '<a href="?addcar=' .  $car['carID'] . '&event=' . $eventID .'" class="list-group-item list-group-item-action">' . $car["brand"] . ' '. $car['model'] . '</a>';
 					}
 				?>
 				</div>
