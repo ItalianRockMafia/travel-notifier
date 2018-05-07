@@ -160,6 +160,9 @@ if(isset($_GET['addcomment'])){
 				<li class="nav-item">
 				<a class="nav-link" href="../emp">EMP</a>
 			  </li>
+				<li class="nav-item">
+				<a class="nav-link" href="../vynil">Vynil</a>
+			  </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="nav-item">
