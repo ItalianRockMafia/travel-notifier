@@ -76,6 +76,9 @@ if(isset($_GET['add'])){
 				<li class="nav-item">
 				<a class="nav-link" href="../emp">EMP</a>
 			  </li>
+				<li class="nav-item">
+				<a class="nav-link" href="../vinyl">Vinyl</a>
+			  </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 				<li class="nav-item">

@@ -22,13 +22,13 @@ if(isset($_GET['signup'])){
 	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] . ' (' . $tg_user['username'] . ')</a> signed up for event <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">' . $event['event_title'] . '</a>.');
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
-} else {
-	echo '
+	} else {
+		echo '
 	<div class="alert alert-danger" role="alert">
 	<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/login.php">login</a> first.
   </div>
 ';
-}
+	}
 }
 
 if(isset($_GET['cancel'])){
@@ -122,7 +122,7 @@ if(isset($_GET['addcomment'])){
 		$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;		
 		getCall($alertURL);
 	}
-	header('Location: ' . $config->app_url . 'meetup/event.php?event=' . $eventID);
+	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
 }
 
 
@@ -159,6 +159,9 @@ if(isset($_GET['addcomment'])){
 			  </li>
 				<li class="nav-item">
 				<a class="nav-link" href="../emp">EMP</a>
+			  </li>
+				<li class="nav-item">
+				<a class="nav-link" href="../vinyl">Vinyl</a>
 			  </li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
