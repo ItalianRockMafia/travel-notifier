@@ -86,8 +86,9 @@ if(isset($_GET['add2car'])){
 		$tgID = $owner['telegramID'];
 		$tgName = $owner['tgusername'];
 	}
-	$text = urlencode("Hi, " . $tgName . chr(10) . '<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> signed up to drive with you to ' . $event['event_title'] . "." .
-					chr(10) . 'If it\'s ok, ignore this message. Else, you can <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&delpassenger=' . $passenger . 'car=' . $car2add . '">remove the person from your car</a>.');
+	$text = urlencode("Hi, " . $tgName . chr(10) . '<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> signed up to drive with you to ' . $event['event_title'] .
+										"." .	chr(10) . 'If it\'s ok, ignore this message. Else, you can <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&delpassenger=' . 
+										$passenger . 'car=' . $car2add . '">remove the person from your car</a>.');
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $tgID . "&parse_mode=HTML&text=" . $text);
 
 	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
@@ -335,7 +336,7 @@ foreach($eventCars["eventCarUsers"] as $carBin){
 			}
 			if(!in_array($_SESSION['irmID'], $carBin)){
 				echo ' <a href="?event=' . $eventID . '&add2car='. $car['carID'] . '" class="btn btn-success ';if($freeSpace < 1){ echo 'disabled';} echo'">Add me to this car</a>';
-				
+								
 			}
 
 			echo '</div>
