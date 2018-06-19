@@ -15,7 +15,7 @@ foreach($events['eventUsers'] as $event){
 	$daysdiff = $datediff->format('%R%a');
 	if($daysdiff == "+1" ){
 		
-	$alertText = urlencode('<strong>Tomorrow: </strong>' . $event['event_title']   .chr(10). 'Start: ' . date("l, d.m.Y H:i", $event['startdate'])  . chr(10) . 'Where: ' . $event['station'] . chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $event['eventID'] . '">View on web</a>' .chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID  . '&signup=1">I\'m coming, sign me up!</a>');
+	$alertText = urlencode('<strong>Tomorrow: </strong>' . $event['event_title']   .chr(10). 'Start: ' . date("l, d.m.Y H:i", $startdate)  . chr(10) . 'Where: ' . $event['station'] . chr(10) . chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $event['eventID'] . '">View on web</a>' .chr(10) . '<a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID  . '&signup=1">I\'m coming, sign me up!</a>');
 	
 		$alertURL = "https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $alertText;
 		echo $alertURL;
