@@ -75,9 +75,8 @@ $events = json_decode(getCall($config->api_url . "eventUsers?transform=1"), true
 foreach($events['eventUsers'] as $event){
 	$startdate = new DateTime($event['startdate']);
 	$enddate = new DateTime($event['enddate']);
-	
 	if($startdate > $date && $enddate > $date){
-	echo '<a href="event.php?event=' . $event['eventID'] . '" class="list-group-item list-group-item-action">' . $event["event_title"] . '</a>';
+	echo '<a href="event.php?event=' . $event['eventID'] . '" class="list-group-item list-group-item-action">' . $startdate->format("d.n.Y"). " - " . $event["event_title"] . '</a>';
 	}
 }
 ?></div><?php
