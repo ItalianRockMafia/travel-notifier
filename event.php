@@ -182,8 +182,15 @@ if ($tg_user !== false) {
 
 	$startdate =  $event['startdate'];
 	$enddate = $event['enddate'];
-$startdate = strtotime($startdate);
-$enddate = strtotime($enddate);
+	$startdate = strtotime($startdate);
+	$enddate = strtotime($enddate);
+	$guestOK = $event['guestOK'];
+	$access = $_SESSION['access'];
+
+	
+	if($access >= 3 || $access == 2 && $guestOK = "1"){
+
+	
 
 	echo '<h1>Event: ' . $event['event_title'] . '</h1>';
 	echo '<p class="desc">' . $event['description'] . '</p>';
@@ -359,7 +366,11 @@ if(!empty($commRecs)){
 </form>
   
 <?php
-
+	} else {
+		echo '<div class="alert alert-warning" role="alert">
+		<strong>Warning.</strong> You need don\'t have access to this event.
+		</div>';
+	}
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">

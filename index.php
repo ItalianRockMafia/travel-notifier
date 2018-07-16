@@ -47,7 +47,11 @@ if ($tg_user !== false) {
 	}
 $events = json_decode(getCall($config->api_url . "events?transform=1"), true);
 ?>
-<h1>Events <a href="new.php"><i class="fa fa-plus-circle righticon" aria-hidden="true"></i></a></h1>
+<h1>Events <a href="new.php">
+<?php if($irm_user['access'] >= 4){
+echo '<i class="fa fa-plus-circle righticon" aria-hidden="true"></i></a>';
+}
+?></h1>
 <div class="list-group">
 <?php
 foreach($events['events'] as $event){
