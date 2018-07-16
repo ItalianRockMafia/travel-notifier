@@ -182,8 +182,8 @@ if ($tg_user !== false) {
 
 	$startdate =  $event['startdate'];
 	$enddate = $event['enddate'];
-$startdate = strtotime($startdate);
-$enddate = strtotime($enddate);
+	$startdate = strtotime($startdate);
+	$enddate = strtotime($enddate);
 
 	echo '<h1>Event: ' . $event['event_title'] . '</h1>';
 	echo '<p class="desc">' . $event['description'] . '</p>';
