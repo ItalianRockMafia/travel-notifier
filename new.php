@@ -1,12 +1,12 @@
 <?php
 session_start();
-require '../global/functions/apicalls.php';
-require '../global/functions/telegram.php';
-$config = require "../config.php";
+require_once '../global/functions/apicalls.php';
+require_once '../global/functions/telegram.php';
+$config = require_once "../config.php";
 $now = new datetime();
 
-require '../global/functions/header.php';
-require '../global/functions/footer.php';
+require_once '../global/functions/header.php';
+require_once '../global/functions/footer.php';
 
 $menu = renderMenu();
 $options['nav'] = $menu;
@@ -73,15 +73,15 @@ if ($tg_user !== false) {
 <form action="?add=1" method="POST">
   <div class="form-group">
   <label for="title">Event title</label>
-    <input type="text" class="form-control" name="title" id="title" placeholder="SAUFEN SAUFEN SAUFEN" required>
+    <input type="text" class="form-control" name="title" id="title" placeholder="SAUFEN SAUFEN SAUFEN" require_onced>
   </div>
   <div class="form-group">
   <label for="startdate">Event start</label>
-    <input type="datetime-local" class="form-control" name="startdate" id="startdate" value="<?php echo $now->format('Y-m-d\TH:i');?>" placeholder="<?php echo $now->format('Y-m-d H:i:s');?>" required>
+    <input type="datetime-local" class="form-control" name="startdate" id="startdate" value="<?php echo $now->format('Y-m-d\TH:i');?>" placeholder="<?php echo $now->format('Y-m-d H:i:s');?>" require_onced>
 	</div>
   <div class="form-group">
   <label for="enddate">Event end</label>
-    <input type="datetime-local" class="form-control" name="enddate" id="enddate" value="<?php echo $now->format('Y-m-d\TH:i');?>" placeholder="2018-27-42 00:00:00" required>
+    <input type="datetime-local" class="form-control" name="enddate" id="enddate" value="<?php echo $now->format('Y-m-d\TH:i');?>" placeholder="2018-27-42 00:00:00" require_onced>
   </div>
   <div class="form-group">
   <label for="url">Event Link</label>
@@ -89,7 +89,7 @@ if ($tg_user !== false) {
   </div>
   <div class="form-group">
   <label for="station">Event Location / Station</label>
-    <input type="text" class="form-control" name="station" id="station" placeholder="Baden" required>
+    <input type="text" class="form-control" name="station" id="station" placeholder="Baden" require_onced>
 	<small id="stationHelp" class="form-text text-muted">Please provide the name, as it is in the SBB mobile app.</small>
   </div>
   <div class="form-group">

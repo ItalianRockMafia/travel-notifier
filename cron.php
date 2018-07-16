@@ -1,8 +1,8 @@
 <?php
 session_start();
-require '/home/husserjo/www/italianrockmafia.ch/global/functions/apicalls.php';
-require '/home/husserjo/www/italianrockmafia.ch/global/functions/telegram.php';
-$config = require "/home/husserjo/www/italianrockmafia.ch/config.php";
+require_once '/home/husserjo/www/italianrockmafia.ch/global/functions/apicalls.php';
+require_once '/home/husserjo/www/italianrockmafia.ch/global/functions/telegram.php';
+$config = require_once "/home/husserjo/www/italianrockmafia.ch/config.php";
 $now = new datetime();
 
 

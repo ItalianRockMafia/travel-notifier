@@ -1,14 +1,14 @@
 <?php
 session_start();
 $eventID = $_GET['event'];
-require '../global/functions/apicalls.php';
-require '../global/functions/telegram.php';
-require '../global/functions/irm.php';
-require '../global/functions/header.php';
-require '../global/functions/footer.php';
+require_once '../global/functions/apicalls.php';
+require_once '../global/functions/telegram.php';
+require_once '../global/functions/irm.php';
+require_once '../global/functions/header.php';
+require_once '../global/functions/footer.php';
 
 
-$config = require "../config.php";
+$config = require_once "../config.php";
 
 $menu = renderMenu();
 $options['nav'] = $menu;
@@ -47,7 +47,7 @@ $header = getHeader($options);
 $footer = renderFooter();
 echo $header;
 
-require 'functions/render.php';
+require_once 'functions/render.php';
 
 ?>
 

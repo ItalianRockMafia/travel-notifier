@@ -1,13 +1,13 @@
 <?php
 session_start();
-require '../global/functions/apicalls.php';
-require '../global/functions/telegram.php';
-$config = require "../config.php";
+require_once '../global/functions/apicalls.php';
+require_once '../global/functions/telegram.php';
+$config = require_once "../config.php";
 $now = new datetime();
 $eventID = $_GET['event'];
 
-require '../global/functions/header.php';
-require '../global/functions/footer.php';
+require_once '../global/functions/header.php';
+require_once '../global/functions/footer.php';
 
 $menu = renderMenu();
 $options['nav'] = $menu;
@@ -75,15 +75,15 @@ if ($tg_user !== false) {
 <?php echo '<form action="?edit=1&event=' .  $eventID . '" method="POST">';?>
   <div class="form-group">
   <label for="title">Event title</label>
-    <input type="text" class="form-control" name="title" id="title" value="<?php echo $event['event_title'];?>" required>
+    <input type="text" class="form-control" name="title" id="title" value="<?php echo $event['event_title'];?>" require_onced>
   </div>
   <div class="form-group">
   <label for="startdate">Event start</label>
-    <input type="datetime-local" class="form-control" name="startdate" id="startdate" value="<?php echo date('Y-m-d\TH:i',$startdate);?>" placeholder="<?php echo date('Y-m-d H:i:s',$startdate);?>" required>
+    <input type="datetime-local" class="form-control" name="startdate" id="startdate" value="<?php echo date('Y-m-d\TH:i',$startdate);?>" placeholder="<?php echo date('Y-m-d H:i:s',$startdate);?>" require_onced>
 	</div>
   <div class="form-group">
   <label for="enddate">Event end</label>
-    <input type="datetime-local" class="form-control" name="enddate" id="enddate" value="<?php echo date('Y-m-d\TH:i',$enddate);?>" placeholder="2018-27-42 00:00:00" required>
+    <input type="datetime-local" class="form-control" name="enddate" id="enddate" value="<?php echo date('Y-m-d\TH:i',$enddate);?>" placeholder="2018-27-42 00:00:00" require_onced>
   </div>
   <div class="form-group">
   <label for="url">Event Link</label>
@@ -91,7 +91,7 @@ if ($tg_user !== false) {
   </div>
   <div class="form-group">
   <label for="station">Event Location / Station</label>
-    <input type="text" class="form-control" name="station" id="station" value="<?php echo $event['station'];?>" required>
+    <input type="text" class="form-control" name="station" id="station" value="<?php echo $event['station'];?>" require_onced>
 	<small id="stationHelp" class="form-text text-muted">Please provide the name, as it is in the SBB mobile app.</small>
   </div>
   <div class="form-group">

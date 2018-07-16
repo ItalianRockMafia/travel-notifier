@@ -1,15 +1,15 @@
 <?php
 session_start();
 $eventID = $_GET['event'];
-require '../global/functions/apicalls.php';
-require '../global/functions/telegram.php';
-require '../global/functions/irm.php';
-$config = require "../config.php";
+require_once '../global/functions/apicalls.php';
+require_once '../global/functions/telegram.php';
+require_once '../global/functions/irm.php';
+$config = require_once "../config.php";
 
-require 'functions/render.php';
+require_once 'functions/render.php';
 
-require '../global/functions/header.php';
-require '../global/functions/footer.php';
+require_once '../global/functions/header.php';
+require_once '../global/functions/footer.php';
 
 $menu = renderMenu();
 $options['nav'] = $menu;
