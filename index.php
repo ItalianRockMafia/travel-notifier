@@ -32,21 +32,35 @@ if ($tg_user !== false) {
 	$irm_users = json_decode(getCall($config->api_url . "users?transform=1&filter=telegramID,eq," . $tg_user['id']), true);
 	foreach($irm_users['users'] as $user){
 		$irm_user['id'] = $user['userID'];
+		$irm_user['access'] = $user['accessIDFK'];
 	}
-	
+
+	$_SESSION['access'] = $irm_user['access'];
 	$_SESSION['irmID'] = $irm_user['id'];
 
-$events = json_decode(getCall($config->api_url . "eventUsers?transform=1"), true);
+	if($irm_user['access'] == "1"){
+		$access = "banned";
+	} elseif($irm_user['access'] == "2"){
+		$access = "guest";
+	} elseif($irm_user['access'] >= "3"){
+		$access = "irm";
+	}
+$events = json_decode(getCall($config->api_url . "events?transform=1"), true);
 ?>
 <h1>Events <a href="new.php"><i class="fa fa-plus-circle righticon" aria-hidden="true"></i></a></h1>
 <div class="list-group">
 <?php
-foreach($events['eventUsers'] as $event){
+foreach($events['events'] as $event){
 	$startdate = new DateTime($event['startdate']);
 	$enddate = new DateTime($event['enddate']);
 	if($startdate > $date && $enddate > $date){
-	echo '<a href="event.php?event=' . $event['eventID'] . '" class="list-group-item list-group-item-action">' . $startdate->format("d.n.Y"). " - " . $event["event_title"] . '</a>';
-	}
+		
+		if($access == "irm" || $event['guestOK'] == "1" && $access == "guest"){
+
+			echo '<a href="event.php?event=' . $event['eventID'] . '" class="list-group-item list-group-item-action">' . $startdate->format("d.n.Y"). " - " . $event["event_title"] .'</a>';
+		}
+		}
+
 }
 ?></div><?php
 } else {

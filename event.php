@@ -225,7 +225,7 @@ if(empty($StatusChecker['attendes'])){
 
 ?>
 
-<?php echo '<a href="tgsender.php?event=' . $eventID . '&send=1" class="btn btn-success"><i class="fa fa-telegram"></i> Send connection</a>';
+<?php echo '<a href="tgsender.php?event=' . $eventID . '&send=1" class="btn btn-success"><i class="fab fa-telegram"></i> Send connection</a>';
 
 if($creator['tgusername']  == $tg_user['username']){
 	echo '<a href="edit.php?event=' . $eventID . '" class="btn btn-success" >Edit Event</a>';	
@@ -234,6 +234,11 @@ if($creator['tgusername']  == $tg_user['username']){
 
 ?>
 <div class="topspacer"></div>
+<?php
+if($event['guestOK'] == '1'){
+	echo '<p class="big">This is a public event. Guests are allowed.</p>
+	';
+} ?>
 <h2>Attendes:</h2>
 <ol>
 <?php

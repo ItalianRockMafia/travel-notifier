@@ -27,9 +27,10 @@ if(isset($_GET['edit'])){
 	$eventlink = htmlspecialchars($_POST['url'], ENT_QUOTES);
 	$station = htmlspecialchars($_POST['station'], ENT_QUOTES);
 	$desc = htmlspecialchars($_POST['description'], ENT_QUOTES);
+	$guestok = $_POST['guestcheck'];
 	$irmID = $_SESSION['irmID'];
 
-	$postfields = "{\n\t\"event_title\": \"$title\", \n\t\"startdate\": \"$startdate\",\n\t\"enddate\": \"$endate\",\n\t\"url\": \"$eventlink\",\n\t\"station\": \"$station\",\n\t\"description\": \"$desc\",\n\t\"userIDFK\": \"$irmID\"\n\t\n}";
+	$postfields = "{\n\t\"event_title\": \"$title\", \n\t\"startdate\": \"$startdate\",\n\t\"enddate\": \"$endate\",\n\t\"url\": \"$eventlink\",\n\t\"station\": \"$station\",\n\t\"description\": \"$desc\",\n\t\"userIDFK\": \"$irmID\",\n\t\"guestOK\":\"$guestok\"\n\t\n}";
 	$affRows = putCall($config->api_url . "events/" . $eventID, $postfields);
 	$startdate = strtotime($startdate);
 	$endate = strtotime($endate);
@@ -98,6 +99,10 @@ if ($tg_user !== false) {
   <label for="description">Event Description</label>
   <textarea class="form-control" name="description" id="description" rows="3" ><?php echo $event['description'];?></textarea>
   </div>
+	<div class="form-group form-check">
+		<input type="checkbox" name="guestcheck" value="1" class="form-check-input" id="guestcheck" <?php if($event['guestOK'] == '1'){echo "checked";} ?>>
+		<label for="guestcheck">Guests are allowed</label>
+	</div>
 
   <button type="submit" class="btn btn-success">Submit</button>
 
