@@ -45,7 +45,7 @@ if ($tg_user !== false) {
 	} elseif($irm_user['access'] >= "3"){
 		$access = "irm";
 	}
-$events = json_decode(getCall($config->api_url . "events?transform=1"), true);
+$events = json_decode(getCall($config->api_url . "events?transform=1&order=startdate,asc"), true);
 ?>
 <h1>Events <a href="new.php">
 <?php if($irm_user['access'] >= 4){
@@ -66,7 +66,8 @@ foreach($events['events'] as $event){
 		}
 
 }
-?></div><?php
+?></div>
+<div class="topspacer"></div><?php
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
