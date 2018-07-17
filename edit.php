@@ -2,6 +2,8 @@
 session_start();
 require_once '../global/functions/apicalls.php';
 require_once '../global/functions/telegram.php';
+require_once '../global/functions/irm.php';
+
 $config = require_once "../config.php";
 $now = new datetime();
 $eventID = $_GET['event'];
@@ -14,7 +16,6 @@ $options['nav'] = $menu;
 $options['title'] = "IRM | Edit event";
 $header = getHeader($options);
 $footer = renderFooter();
-
 
 // FORM HANDLER
 if(isset($_GET['edit'])){
@@ -65,8 +66,12 @@ echo $header;
 <?php
 
 $tg_user = getTelegramUserData();
+saveSessionArray($tg_user);
 
 if ($tg_user !== false) {
+	if($_SESSION['access'] > 2){
+
+	
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID), true);
 	$startdate = strtotime($event['startdate']);
 	$enddate = strtotime($event['enddate']);
@@ -108,6 +113,14 @@ if ($tg_user !== false) {
 
 </form>
 	</div><?php
+	}
+	else {
+		echo '
+		<div class="alert alert-warning" role="alert">
+		<strong>Warning.</strong> Access denied.
+			</div>
+	';
+	}
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">

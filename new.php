@@ -7,6 +7,8 @@ $now = new datetime();
 
 require_once '../global/functions/header.php';
 require_once '../global/functions/footer.php';
+require_once '../global/functions/irm.php';
+
 
 $menu = renderMenu();
 $options['nav'] = $menu;
@@ -67,6 +69,10 @@ if(isset($_GET['add'])){
 
 
 $tg_user = getTelegramUserData();
+saveSessionArray($tg_user);
+if($_SESSION['access'] > 2){
+
+
 
 if ($tg_user !== false) {
 ?>
@@ -106,6 +112,15 @@ if ($tg_user !== false) {
 
 </form>
 	</div><?php
+}
+else {
+	echo '
+	<div class="alert alert-warning" role="alert">
+	<strong>Warning.</strong> Access denied.
+	  </div>
+';
+}
+
 } else {
 	echo '
 	<div class="alert alert-danger" role="alert">
