@@ -188,10 +188,10 @@ if ($tg_user !== false) {
 	$access = $_SESSION['access'];
 
 	
-	if($access >= 3 || $access == 2 && $guestOK = "1"){
+	
+	if($access >= 3 || $access == "2" && $guestOK == "1"){
 
 	
-
 	echo '<h1>Event: ' . $event['event_title'] . '</h1>';
 	echo '<p class="desc">' . $event['description'] . '</p>';
 	echo '<div class="topspacer"></div>';
