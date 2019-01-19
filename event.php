@@ -27,8 +27,8 @@ if(isset($_GET['delete'])){
 		$m_msg = "Event deleted successfully.";
 		$m_type = "success";
 	} else {
-		$m_msg = "Event could not be deleted. Unknown error."
-		$m_type = "error"
+		$m_msg = "Event could not be deleted. Unknown error.";
+		$m_type = "error";
 	}
 	$m_msg = urlencode($m_msg);
 	header('Location: https://italianrockmafia.ch/meetup/index.php?msg=' . $m_msg . '&type=' . $m_type);
@@ -113,7 +113,7 @@ if(isset($_GET['addcar'])){
 		$m_type = "error";
 	}
 	$m_msg = urlencode($m_msg);
-	header('Location: https://italianrockmafia.ch/meetup/event.php&event=' . $eventID . "&msg=" . $m_msg . "&type=" $m_type);
+	header('Location: https://italianrockmafia.ch/meetup/event.php&event=' . $eventID . "&msg=" . $m_msg . "&type=" . $m_type);
 
 }
 if(isset($_GET['deleteCar'])){
@@ -197,7 +197,7 @@ echo $header;
 saveSessionArray($tg_user);
 if ($tg_user !== false) {
 
-if(isset($_GET['type']) && isset($_GETü'msg'])){
+if(isset($_GET['type']) && isset($_GET['msg'])){
 	$m_msg = urldecode($_GET['msg']);
 	echo '<div class="alert alert-'. $_GET['type'].' alert-dismissible fade show" role="alert">
 	'. $m_msg .'
