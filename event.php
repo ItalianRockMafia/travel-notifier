@@ -1,72 +1,120 @@
 <?php
+// Init & get required user data & config
 session_start();
 $eventID = $_GET['event'];
 require_once '../global/functions/apicalls.php';
 require_once '../global/functions/telegram.php';
 require_once '../global/functions/irm.php';
 $config = require_once "../config.php";
-
+// get header and footer
 require_once '../global/functions/header.php';
 require_once '../global/functions/footer.php';
-
+//Set options & render header and footer
 $menu = renderMenu();
 $options['nav'] = $menu;
 $options['title'] = "IRM | event detail";
 $header = getHeader($options);
 $footer = renderFooter();
 
-
+// Get TG user detail
 $tg_user = getTelegramUserData();
 saveSessionArray($tg_user);
+// Delete event
 $event2del = $_GET['delete'];
 if(isset($_GET['delete'])){
-	deleteCall($config->api_url . "events/" . $event2del);
-	header('Location: https://italianrockmafia.ch/meetup/index.php');
+	$del = deleteCall($config->api_url . "events/" . $event2del);
+	if(is_numeric($del)){
+		$m_msg = "Event deleted successfully.";
+		$m_type = "success";
+	} else {
+		$m_msg = "Event could not be deleted. Unknown error."
+		$m_type = "error"
+	}
+	$m_msg = urlencode($m_msg);
+	header('Location: https://italianrockmafia.ch/meetup/index.php?msg=' . $m_msg . '&type=' . $m_type);
 }
 
+// register for event
 if(isset($_GET['signup'])){
+	// only if user is logged in
 	if ($tg_user !== false) {
-	$user = $_SESSION['irmID'];
-	$postfields = "{\n \t \"userIDFK\": \"$user\", \n \t \"eventIDFK\": \"$eventID\" \n }";
-	$result = postCall($config->api_url . "attendes", $postfields);
-	$event = json_decode(getCall($config->api_url . "events/" . $eventID), true);
-	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] . ' (' . $tg_user['username'] . ')</a> signed up for event <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">' . $event['event_title'] . '</a>.');
-	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
-	header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+		$user = $_SESSION['irmID'];
+		// set up DB fields
+		$postfields = "{\n \t \"userIDFK\": \"$user\", \n \t \"eventIDFK\": \"$eventID\" \n }";
+		// write event attendance to DB
+		$result = postCall($config->api_url . "attendes", $postfields);
+		// Get event details for TG message
+		$event = json_decode(getCall($config->api_url . "events/" . $eventID), true);
+		// compose + send TG message
+		$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['firstname'] . ' ' . $_SESSION['lastname'] . ' (' . $tg_user['username'] . ')</a> signed up for event <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '">' . $event['event_title'] . '</a>.');
+		$msg = json_decode(getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text), true);
+		// check results from DB write & tg send
+		if(is_numeric($result) && $msg['ok'] == "true"){
+			$m_msg = "You are registred for this event.";
+			$m_type = "success";
+		} elseif(is_numeric($result) && $msg['ok'] == "false"){
+			$m_msg = "Could not send telegram message";
+			$m_type = "warning";
+		} else {
+			$m_msg = "Could not register you for  this event.";
+			$m_type = "error";
+		}
+		$m_msg = urlencode($m_msg);
+		// redirect
+		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . "&msg=" . $m_msg . "&type=" . $m_type);
 	} else {
-		echo '
-	<div class="alert alert-danger" role="alert">
-	<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/login.php">login</a> first.
-  </div>
-';
+		//user not logged in
+			echo '
+				<div class="alert alert-danger" role="alert">
+				<strong>Error.</strong> You need to <a href="https://italianrockmafia.ch/login.php">login</a> first.
+  			</div>
+			';
 	}
 }
 
 if(isset($_GET['cancel'])){
+	// unregister from event
 		$list = json_decode(getCall($config->api_url . 'attendes?transform=1&filter[]=userIDFK,eq,' . $_SESSION['irmID'] . '&filter[]=eventIDFK,eq,' . $eventID . "satisfy=all"), true);
 		foreach($list['attendes'] as $user){
 			$attende2del = $user['attendeID'];
 		}
 	
 		$result = deleteCall($config->api_url . "attendes/" . $attende2del);
-		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID);
+		if(is_numeric($result)){
+			$m_msg = "unregistred you from this event.";
+			$m_type = "success";
+		} else {
+			$m_msg = "Unknown error, could not unregister you.";
+			$m_type = "error";
+		}
+		$m_msg = urlencode($m_msg);
+		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . "&msg=" . $m_msg . "&type=" . $m_type);
 	}
 
 if(isset($_GET['addcar'])){
+	// add a car to event
 	$car2add = $_GET['addcar'];
 	$driver = $_SESSION['irmID'];
+	// set up event-car and write to DB
 	$postfields = "{\n \t \"userIDFK\": \"$driver\", \n \t \"eventIDFK\": \"$eventID\", \n \t \"carIDFK\": \"$car2add\" \n }";
 	$result = postCall($config->api_url . "eventCarUsers", $postfields);
+	// get event details for TG msg
 	$event = json_decode(getCall($config->api_url . "events/" . $eventID . "?transform=1"),true);	
+	// compose and send msg to tg chat
 	$text = urlencode('<a href="tg://user?id=' . $_SESSION['tgID'] . '">' . $_SESSION['username'] . '</a> added a car to ' . $event['event_title'] . chr(10) . 
 							'If you want to join as a passenger, <a href="https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . '&add2car=' . $car2add . '">click here</a>.');
 	$msg = getCall("https://api.telegram.org/bot" . $config->telegram['token'] . "/sendMessage?chat_id=" .  $config->telegram['chatID'] . "&parse_mode=HTML&text=" . $text);
 							
 	if(is_numeric($result)){
-		header('Location: https://italianrockmafia.ch/meetup/event.php?caradd=success&event=' . $eventID);
+		$m_msg = "Your car was added.";
+		$m_type = "success";
 	} else {
-		header('Location: https://italianrockmafia.ch/meetup/event.php?caradd=fail&event=' . $eventID);
+		$m_msg = "Could not add your car.";
+		$m_type = "error";
 	}
+	$m_msg = urlencode($m_msg);
+	header('Location: https://italianrockmafia.ch/meetup/event.php&event=' . $eventID . "&msg=" . $m_msg . "&type=" $m_type);
+
 }
 if(isset($_GET['deleteCar'])){
 	$car2del = $_GET['deleteCar'];
@@ -148,6 +196,16 @@ echo $header;
 
 saveSessionArray($tg_user);
 if ($tg_user !== false) {
+
+if(isset($_GET['type']) && isset($_GETü'msg'])){
+	$m_msg = urldecode($_GET['msg']);
+	echo '<div class="alert alert-'. $_GET['type'].' alert-dismissible fade show" role="alert">
+	'. $m_msg .'
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>';
+}
 
 	if (isset($_GET['sent'])){
 		echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
