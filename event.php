@@ -28,7 +28,7 @@ if(isset($_GET['delete'])){
 		$m_type = "success";
 	} else {
 		$m_msg = "Event could not be deleted. Unknown error.";
-		$m_type = "error";
+		$m_type = "danger";
 	}
 	$m_msg = urlencode($m_msg);
 	header('Location: https://italianrockmafia.ch/meetup/index.php?msg=' . $m_msg . '&type=' . $m_type);
@@ -57,7 +57,7 @@ if(isset($_GET['signup'])){
 			$m_type = "warning";
 		} else {
 			$m_msg = "Could not register you for  this event.";
-			$m_type = "error";
+			$m_type = "danger";
 		}
 		$m_msg = urlencode($m_msg);
 		// redirect
@@ -85,7 +85,7 @@ if(isset($_GET['cancel'])){
 			$m_type = "success";
 		} else {
 			$m_msg = "Unknown error, could not unregister you.";
-			$m_type = "error";
+			$m_type = "danger";
 		}
 		$m_msg = urlencode($m_msg);
 		header('Location: https://italianrockmafia.ch/meetup/event.php?event=' . $eventID . "&msg=" . $m_msg . "&type=" . $m_type);
@@ -110,7 +110,7 @@ if(isset($_GET['addcar'])){
 		$m_type = "success";
 	} else {
 		$m_msg = "Could not add your car.";
-		$m_type = "error";
+		$m_type = "danger";
 	}
 	$m_msg = urlencode($m_msg);
 	header('Location: https://italianrockmafia.ch/meetup/event.php&event=' . $eventID . "&msg=" . $m_msg . "&type=" . $m_type);
