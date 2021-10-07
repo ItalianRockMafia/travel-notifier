@@ -20,6 +20,10 @@ echo $header;
 ?>
 
 <?php
+
+if(isset($_GET['name'])){
+	$newEventtitle = htmlspecialchars($_GET['name'], ENT_QUOTES);
+}
 // FORM HANDLER
 if(isset($_GET['add'])){
 	$title = htmlspecialchars($_POST['title'], ENT_QUOTES);
@@ -80,7 +84,7 @@ if ($tg_user !== false) {
 <form action="?add=1" method="POST">
   <div class="form-group">
   <label for="title">Event title</label>
-    <input type="text" class="form-control" name="title" id="title" placeholder="SAUFEN SAUFEN SAUFEN" require_onced>
+    <input type="text" class="form-control" name="title" id="title" <?php if (isset($newEventtitle)) {echo 'value="' . $newEventtitle .'"'; } ?> placeholder="SAUFEN SAUFEN SAUFEN" require_onced>
   </div>
   <div class="form-group">
   <label for="startdate">Event start</label>
